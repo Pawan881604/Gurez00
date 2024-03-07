@@ -75,168 +75,236 @@ exports.getAllMasterCoupon = catchAsyncError(async (req, res, next) => {
 
 exports.verifyMasterCoupon = catchAsyncError(async (req, res, next) => {
   const { coupon, ids } = req.body;
-  const stringArray = [ids];
-  const numbersArray = stringArray[0]
-    .split(",")
-    .map((str) => parseInt(str, 10));
-  // let c = isExist.master_coupon_products[0]
-  //   .split(",")
-  //   .map((str) => parseInt(str, 10));
 
-  const data = await applyCoupon(coupon, stringArray);
-
-  async function applyCoupon(coupon, numbersArray, user) {
-    if (await isValidCoupon(coupon)) {
-      const current = Date.now();
-      const currentDate = new Date(current);
-
-      if (await isWithinDateRange(currentDate, coupon)) {
-        const couponData = await MasrterCouponModel.findOne({
-          master_coupon_code: coupon,
-        });
-        const Orders = await orderModels.find({ coupon });
-        const limit = 500;
-        if (
-          await isBelowUsageLimit(
-            couponData.master_coupon_total_usage_limit,
-            // Orders.length
-            limit
-          )
-        ) {
-          const couponData = await MasrterCouponModel.findOne({
-            master_coupon_code: coupon,
-          });
-
-          // Apply discount based on coupon type
-          if (couponData.master_coupon_type === "Percentage discount") {
-            return applyCartPercentageDiscount(
-              "percentage",
-              couponData.master_coupon_name,
-              couponData.master_coupon_amount,
-              couponData.master_coupon_uuid
-            );
-          } else if (
-            couponData.master_coupon_type === "Fixed basket discount"
-          ) {
-            return applyCartFixedBasketDiscount(
-              "fix items",
-              couponData.master_coupon_name,
-              couponData.master_coupon_amount,
-              couponData.master_coupon_uuid
-            );
-          } else if (
-            couponData.master_coupon_type === "Fixed product discount"
-          ) {
-            return applyFixedProductDiscount(
-              "fix product",
-              couponData.master_coupon_name,
-              couponData.master_coupon_amount,
-              couponData.master_coupon_products,
-              couponData.master_coupon_uuid
-            );
-          } else if (couponData.master_coupon_type === "Discount By User") {
-            return applyDiscountByUser("user", couponData.master_coupon_amount);
-          }
-        }
-      } else {
-        return "Coupon is not valid within the date range.";
-      }
-    } else {
-      return "Invalid coupon.";
-    }
+  const couponData = await MasrterCouponModel.findOne({
+    master_coupon_code: coupon,
+  });
+  let data;
+  if (!couponData) {
+    return next(new ErrorHandler("Invalid coupon.", 404));
   }
 
-  async function isValidCoupon(coupon) {
-    const isExist = await MasrterCouponModel.findOne({
-      master_coupon_code: coupon,
-    });
-    return isExist;
+  const valid_date = isWithinDateRange(couponData);
+  if (!valid_date) {
+    return next(new ErrorHandler("Coupon has been expired.", 404));
   }
 
-  async function isWithinDateRange(date, coupon) {
-    const isExist = await MasrterCouponModel.findOne({
-      master_coupon_code: coupon,
-    });
-
-    const start = isExist.master_coupon_start_date;
-    const end = isExist.master_coupon_end_date;
-
-    if (start < date && date < end) {
-      return isExist;
-    } else {
-      return "Coupon has benn expire.";
-    }
+  if (couponData.master_coupon_type === "Percentage discount") {
+    data = applyCartPercentageDiscount("percentage", couponData);
+  } else if (couponData.master_coupon_type === "Fixed basket discount") {
+    data = applyCartFixedBasketDiscount("fix items", couponData);
   }
 
-  async function isBelowUsageLimit(limit, couponLength) {
-    if (couponLength < limit) {
-      return true;
-    } else {
-      return "This coupon expire";
-    }
-  }
-
-  async function applyCartPercentageDiscount(type, name, discountAmount, uuid) {
-    coupondata = {
-      type: type,
-      name: name,
-      disscount: discountAmount,
-      uuid,
-      productid: null,
-      message: "Coupon applied successfully!",
-    };
-    return coupondata;
-  }
-
-  async function applyCartFixedBasketDiscount(
-    type,
-    name,
-    discountAmount,
-    uuid
-  ) {
-    coupondata = {
-      type: type,
-      name: name,
-      uuid,
-      disscount: discountAmount,
-      productid: null,
-      message: "Coupon applied successfully!",
-    };
-    return coupondata;
-  }
-
-  async function applyFixedProductDiscount(
-    type,
-    name,
-    discountAmount,
-    numbersArray,
-    uuid
-  ) {
-    coupondata = {
-      type: type,
-      name: name,
-      disscount: discountAmount,
-      uuid,
-      productid: numbersArray ? numbersArray : null,
-      message: "Coupon applied successfully!",
-    };
-    return coupondata;
-  }
-  async function applyDiscountByUser(type, discountAmount) {
-    coupondata = {
-      type: type,
-      // name: discountAmount,
-      disscount: discountAmount,
-      productid: null,
-      message: "Coupon applied successfully!",
-    };
-    return coupondata;
-  }
   res.status(200).json({
     success: true,
     coupon: data,
   });
 });
+
+function isWithinDateRange(coupon) {
+  const date = Date.now();
+  const current_date = new Date(date);
+  const start_date = coupon.master_coupon_start_date;
+  const end_date = coupon.master_coupon_end_date;
+
+  if (end_date !== null) {
+    if (start_date < current_date && current_date < end_date) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  return true;
+}
+
+function applyCartPercentageDiscount(type, coupon) {
+  coupondata = {
+    type: type,
+    name: coupon.master_coupon_name,
+    disscount: coupon.master_coupon_amount,
+    uuid: coupon.master_coupon_uuid,
+    productid: null,
+    message: "Coupon applied successfully!",
+  };
+  return coupondata;
+}
+
+function applyCartFixedBasketDiscount(type, coupon) {
+  coupondata = {
+    type: type,
+    name: coupon.master_coupon_name,
+    uuid: coupon.master_coupon_uuid,
+    disscount: coupon.master_coupon_amount,
+    productid: null,
+    message: "Coupon applied successfully!",
+  };
+  return coupondata;
+}
+
+// exports.verifyMasterCoupon = catchAsyncError(async (req, res, next) => {
+//   const { coupon, ids } = req.body;
+//   const stringArray = [ids];
+//   const numbersArray = stringArray[0]
+//     .split(",")
+//     .map((str) => parseInt(str, 10));
+//   // let c = isExist.master_coupon_products[0]
+//   //   .split(",")
+//   //   .map((str) => parseInt(str, 10));
+
+//   const data = await applyCoupon(coupon, stringArray);
+
+//   async function applyCoupon(coupon, numbersArray, user) {
+//     if (await isValidCoupon(coupon)) {
+//       const current = Date.now();
+//       const currentDate = new Date(current);
+
+//       if (await isWithinDateRange(currentDate, coupon)) {
+//         const couponData = await MasrterCouponModel.findOne({
+//           master_coupon_code: coupon,
+//         });
+//         const Orders = await orderModels.find({ coupon });
+//         const limit = 500;
+//         if (
+//           await isBelowUsageLimit(
+//             couponData.master_coupon_total_usage_limit,
+//             // Orders.length
+//             limit
+//           )
+//         ) {
+//           const couponData = await MasrterCouponModel.findOne({
+//             master_coupon_code: coupon,
+//           });
+
+//           // Apply discount based on coupon type
+//           if (couponData.master_coupon_type === "Percentage discount") {
+//             return applyCartPercentageDiscount(
+//               "percentage",
+//               couponData.master_coupon_name,
+//               couponData.master_coupon_amount,
+//               couponData.master_coupon_uuid
+//             );
+//           } else if (
+//             couponData.master_coupon_type === "Fixed basket discount"
+//           ) {
+//             return applyCartFixedBasketDiscount(
+//               "fix items",
+//               couponData.master_coupon_name,
+//               couponData.master_coupon_amount,
+//               couponData.master_coupon_uuid
+//             );
+//           } else if (
+//             couponData.master_coupon_type === "Fixed product discount"
+//           ) {
+//             return applyFixedProductDiscount(
+//               "fix product",
+//               couponData.master_coupon_name,
+//               couponData.master_coupon_amount,
+//               couponData.master_coupon_products,
+//               couponData.master_coupon_uuid
+//             );
+//           } else if (couponData.master_coupon_type === "Discount By User") {
+//             return applyDiscountByUser("user", couponData.master_coupon_amount);
+//           }
+//         }
+//       } else {
+//         return "Coupon is not valid within the date range.";
+//       }
+//     } else {
+//       return "Invalid coupon.";
+//     }
+//   }
+
+//   async function isValidCoupon(coupon) {
+//     const isExist = await MasrterCouponModel.findOne({
+//       master_coupon_code: coupon,
+//     });
+//     return isExist;
+//   }
+
+//   async function isWithinDateRange(date, coupon) {
+//     const isExist = await MasrterCouponModel.findOne({
+//       master_coupon_code: coupon,
+//     });
+
+//     const start = isExist.master_coupon_start_date;
+//     const end = isExist.master_coupon_end_date;
+
+//     if (start < date && date < end) {
+//       return isExist;
+//     } else {
+//       return "Coupon has benn expire.";
+//     }
+//   }
+
+//   async function isBelowUsageLimit(limit, couponLength) {
+//     if (couponLength < limit) {
+//       return true;
+//     } else {
+//       return "This coupon expire";
+//     }
+//   }
+
+//   async function applyCartPercentageDiscount(type, name, discountAmount, uuid) {
+//     coupondata = {
+//       type: type,
+//       name: name,
+//       disscount: discountAmount,
+//       uuid,
+//       productid: null,
+//       message: "Coupon applied successfully!",
+//     };
+//     return coupondata;
+//   }
+
+//   async function applyCartFixedBasketDiscount(
+//     type,
+//     name,
+//     discountAmount,
+//     uuid
+//   ) {
+//     coupondata = {
+//       type: type,
+//       name: name,
+//       uuid,
+//       disscount: discountAmount,
+//       productid: null,
+//       message: "Coupon applied successfully!",
+//     };
+//     return coupondata;
+//   }
+
+//   async function applyFixedProductDiscount(
+//     type,
+//     name,
+//     discountAmount,
+//     numbersArray,
+//     uuid
+//   ) {
+//     coupondata = {
+//       type: type,
+//       name: name,
+//       disscount: discountAmount,
+//       uuid,
+//       productid: numbersArray ? numbersArray : null,
+//       message: "Coupon applied successfully!",
+//     };
+//     return coupondata;
+//   }
+//   async function applyDiscountByUser(type, discountAmount) {
+//     coupondata = {
+//       type: type,
+//       // name: discountAmount,
+//       disscount: discountAmount,
+//       productid: null,
+//       message: "Coupon applied successfully!",
+//     };
+//     return coupondata;
+//   }
+//   res.status(200).json({
+//     success: true,
+//     coupon: data,
+//   });
+// });
 
 // exports.deleteBlogCategore = catchAsyncError(async (req, res, next) => {
 //

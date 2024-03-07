@@ -13,7 +13,10 @@ import {
   VERIFY_MASTER_COUPON_SUCCESS,
 } from "../constants/MasterCouponConstant";
 
-export const massterCouponReducer = (state = { Coupons: [] }, action) => {
+export const massterCouponReducer = (
+  state = { Coupons: [], coupon_data: {} },
+  action
+) => {
   switch (action.type) {
     case CREATE_MASTER_COUPON_REQUEST:
     case VERIFY_MASTER_COUPON_REQUEST:
@@ -25,29 +28,25 @@ export const massterCouponReducer = (state = { Coupons: [] }, action) => {
 
     case CREATE_MASTER_COUPON_SUCCESS:
       return {
+        ...state,
         loading: false,
         product: action.payload,
         success: true,
       };
     case ALL_MASTER_COUPON_SUCCESS:
-      return {
-        loading: false,
-        coupon: action.payload,
-      };
+      return { ...state, loading: false, coupon: action.payload };
     case VERIFY_MASTER_COUPON_SUCCESS:
       return {
+        ...state,
         loading: false,
         success: true,
-        coupon: action.payload,
+        coupon_data: action.payload,
       };
 
     case CREATE_MASTER_COUPON_FAIL:
     case VERIFY_MASTER_COUPON_FAIL:
     case ALL_MASTER_COUPON_FAIL:
-      return {
-        loading: false,
-        error: action.payload,
-      };
+      return { ...state, loading: false, error: action.payload };
 
     case ALL_MASTER_COUPON_CLEAR:
       return {
@@ -56,6 +55,7 @@ export const massterCouponReducer = (state = { Coupons: [] }, action) => {
       };
     case CREATE_MASTER_COUPON_RESET:
       return {
+        ...state,
         loading: false,
         product: action.payload,
         success: null,
@@ -63,9 +63,12 @@ export const massterCouponReducer = (state = { Coupons: [] }, action) => {
 
     case VERIFY_MASTER_COUPON_RESET:
       return {
+        ...state,
+        ...state,
         loading: false,
-        product: action.payload,
+        coupon_data: null,
         success: null,
+        error: null,
       };
 
     default:

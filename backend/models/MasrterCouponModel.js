@@ -44,6 +44,7 @@ const masterCouponSchema = new mongoose.Schema({
   },
   master_coupon_end_date: {
     type: Date,
+    default:null
   },
   master_coupon_day_start_time: {
     type: Date,
