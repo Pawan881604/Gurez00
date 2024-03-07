@@ -1,36 +1,52 @@
 .form-flex {
   display: flex;
   width: 100%;
+  margin-top: 15px;
 }
-.form-text-area {
-  width: 50%;
-}
-.form-input-area {
-  width: 50%;
-}
-.form-text-gen-info p {
-  margin: 10px 0;
-  font-size: 18px;
-}
-.form-text-gen-info-input label {
-  display: block;
-  font-size: 18px;
-}
-.form-text-gen-info-input select {
-  margin: 10px 0;
-  max-width: 80%;
-  font-size: 18px;
+.form-fields-area {
+  width: 33.33%;
   padding: 10px;
+  position: relative;
+}
+.col-md-6 {
+  width: 50%;
+}
+.flex-warp {
+  flex-wrap: wrap;
+}
+.flex-warp .col-md-6:nth-child(even) {
+  padding-right: 2px;
+}
+.flex-warp .col-md-6:nth-child(odd) {
+  padding-left: 2px;
+}
+.col-md-12 {
   width: 100%;
 }
-.form-input-area-text p {
-  font-size: 18px;
-  margin: 10px 0;
+.col-md-6 {
+  width: 50%;
 }
-.form-input-area-text p span {
-  display: block;
-  font-weight: 600;
+.form select,
+.form input,
+.form textarea {
+  padding: 0px;
+  max-width: 100%;
+  font-size: 14px;
+  padding: 5px;
+  border-radius: 5px;
+  outline: unset;
+  border: #424242 1px solid;
+  width: 100%;
+  color: #424242;
 }
+.form .col-md-12,
+.form .col-md-6 {
+  margin-bottom: 5px;
+}
+.form h2 {
+  margin: 0px;
+}
+
 .form-input-area-input .input-field-area {
   width: 100%;
 }
@@ -45,8 +61,8 @@
 }
 .edit-order-form {
   position: absolute;
-  top: 0px;
-  right: 0px;
+  top: 20px;
+  right: 10px;
 }
 .edit-order-form svg {
   cursor: pointer;
@@ -145,11 +161,40 @@ form button[type="submit"]:hover {
 .order-flex-right {
   width: 30%;
 }
-.order-attribution-dataset {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.order-totals-items .col-md-6:nth-child(2) {
+  text-align: right;
 }
-.order-attribution-div h4 {
-  color: #000;
+.order-totals-items {
+  border-bottom: 1px solid #dfdfdf;
+  border-top: 1px solid #dfdfdf;
+  padding: 1.5em 2em;
+  background: #f8f8f8;
+  line-height: 2em;
+}
+.coupon-code{
+  border: #dfdfdf 1px solid;
+  background: #fff;
+  padding: 2px 20px ;
+  font-size: 14px;
+}
+.thumb {
+  max-width: 100px;
+  padding: 4px;
+}
+.postbox {
+  padding: 0px;
+  overflow: hidden;
+}
+.postbox-header {
+  padding: 15px 20px;
+  background: rgb(248 248 248);
+}
+.postbox-inner {
+  padding: 15px 20px;
+}
+.col-md-8 {
+  width: 70%;
+}
+.col-md-2 {
+  width: 10%;
 }

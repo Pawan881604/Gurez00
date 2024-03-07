@@ -188,7 +188,7 @@ export const order_details_info = (id) => async (dispatch) => {
   try {
     dispatch({ type: ORDER_DETAILS_INFO_REQUEST });
     const { data } = await axios.get(`/api/v1/order/order-details-info/${id}`);
-    dispatch({ type: ORDER_DETAILS_INFO_SUCCESS, payload: data });
+    dispatch({ type: ORDER_DETAILS_INFO_SUCCESS, payload: data.order_details });
   } catch (err) {
     dispatch({
       type: ORDER_DETAILS_INFO_FAIL,

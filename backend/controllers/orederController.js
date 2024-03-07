@@ -8,6 +8,7 @@ const orderShippingInfoModel = require("../models/orderShippingInfoModel");
 const product = require("../models/productModels");
 const ErrorHandler = require("../utils/errorhandler");
 const { sendOrderEmail, sendOrderStatusEmail } = require("../utils/sendEmail");
+const MasrterCouponModel = require("../models/MasrterCouponModel");
 
 //------create new order
 exports.createOrder = catchAsyncError(async (req, res, next) => {
@@ -23,7 +24,7 @@ exports.createOrder = catchAsyncError(async (req, res, next) => {
     shippingPrice,
     totalPrice,
     uuid,
-    coupon_uuid,
+    coupon_uuid,coupon_code,
     coupon_discounttype,
     coupon_discount,
     totalQuantity,
@@ -40,9 +41,10 @@ exports.createOrder = catchAsyncError(async (req, res, next) => {
     order_info_shipping_charges: shippingPrice,
     order_info_gst: taxPrice,
     master_coupon_uuid: coupon_uuid,
+    master_coupon_code: coupon_code,
     order_info_grand_total: itemPrice + taxPrice + shippingPrice,
     user: req.user._id,
-    order_info_status: payment_mode === "COD" ? "Proccessing" : "FAILURE",
+    order_info_status: payment_mode === "COD" ? "Proccessing" : "Failed",
     order_info_mode: payment_mode ,
   });
   const shippingStatus = await orderShippingInfoModel.create({
@@ -66,19 +68,24 @@ exports.createOrder = catchAsyncError(async (req, res, next) => {
   // // sendOrderEmail(orderConfermation);
   // //   order details
   const product_uuid = [];
+  const product_id = [];
   let product_Total_Price = 0;
   let product_Total_Quantity = 0;
 
   orderItem &&
     orderItem.forEach((item, i) => {
       product_uuid.push(item.product_uuid);
+      product_id.push(item.productId);
       product_Total_Price += item.price * item.quantity;
       product_Total_Quantity += item.quantity;
     });
+  
   const order_Details_length = await orderDetailsMode.countDocuments();
   const orderDetails = await orderDetailsMode.create({
     order_detail_id: order_Details_length + 1,
     order_info_uuid: uuid,
+    product_Items:orderItem,
+    product_id:product_id,
     product_uuid: product_uuid,
     order_info_detail_price: product_Total_Price,
     order_detail_quantity: product_Total_Quantity,
@@ -95,8 +102,7 @@ exports.createOrder = catchAsyncError(async (req, res, next) => {
 exports.getSingleOrder = catchAsyncError(async (req, res, next) => {
   const Order = await order.findById(req.params.id).populate([
     { path: "user", model: "User" },
-    // { path: "shippingInfo", model: "shippingInfo" },
-    // { path: "paymentInfo", model: "OrderPaymentInfo" },
+    // {path:'master_coupon_uuid',model:'masterCoupon'}
   ]);
 
   if (!Order) {
@@ -314,8 +320,8 @@ exports.order_details_info = catchAsyncError(async (req, res, next) => {
   const { id } = req.params;
   const order_details = await orderDetailsMode.findOne({
     order_info_uuid: id,
-  });
-  res.status(201).json({
+  }).populate({path:'product_id',model:'Product'})
+  res.status(200).json({
     success: true,
     order_details,
   });

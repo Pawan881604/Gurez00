@@ -41,6 +41,7 @@ const ProccessPaymentStep = () => {
     coupon_uuid: orderInfo.coupon_uuid,
     totalPrice: orderInfo.totalPrice,
     coupon_discountamount: orderInfo.discountamount,
+    coupon_code: orderInfo.coupon,
     coupon_discounttype: orderInfo.discounttype,
     coupon_discount: orderInfo.coupon_discount,
     totalQuantity: orderInfo.totalQuantity,

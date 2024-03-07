@@ -190,6 +190,16 @@ ol li {
 .main .section-cont .coll-title {
   padding: 30px 0px;
 }
+.col-md-3{
+  width: 15%;
+}
+.col-md-10{
+  width: 80%;
+}
+.col-md-4{
+  width: 25%;
+}
+
 .section-width-cont {
   max-width: 1200px;
   margin: 0 auto;
@@ -214,7 +224,20 @@ ol li {
 .set-position {
   position: relative;
 }
-
+.block-p {
+  display: block;
+  margin-bottom: 5px;
+}
+.xsm-font-size {
+  font-size: 15px;
+  color: #424242;
+}
+.from-space{
+  padding: 10px 0;
+}
+.form input{
+  width:100%;
+}
 .toggle-chekbox-active .MuiSwitch-colorSecondary {
   color: #f50057;
   transform: translateX(20px);

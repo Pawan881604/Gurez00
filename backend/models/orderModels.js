@@ -37,6 +37,10 @@ const orderSchema = new mongoose.Schema({
   master_coupon_uuid: {
     type: String,
   },
+  master_coupon_code: {
+    type: String,
+    default: null,
+  },
   order_info_gst: {
     type: Number,
     default: 0,

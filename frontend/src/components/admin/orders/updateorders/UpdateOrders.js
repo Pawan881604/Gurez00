@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Aside } from "../../aside/Aside";
-import { NavLink, useParams } from "react-router-dom";
+import { NavLink, useNavigate, useParams } from "react-router-dom";
 import { useAlert } from "react-alert";
 import { useSelector, useDispatch } from "react-redux";
 import Loader from "../../../layout/loader/Loader";
@@ -10,6 +10,7 @@ import {
   getOrderDetails,
   order_details_info,
   order_shipping_info,
+  updateOrder,
 } from "../../../../actions/OrderAction";
 import UpdateOrderForm from "./assets/UpdateOrderForm";
 import {
@@ -23,15 +24,72 @@ export const UpdateOrders = () => {
   const dispatch = useDispatch();
   const alert = useAlert();
   const { id } = useParams();
+  const Navigate = useNavigate();
   const { loading, orders, error } = useSelector((state) => state.orderDetails);
+  const {
+    loading: update_loading,
+    isUpdate,
+    error: update_error,
+  } = useSelector((state) => state.adminOrders);
+  const { cartItem, shippingInfo: cartShippingInfo } = useSelector(
+    (state) => state.cart
+  );
+
+  const [inputValue, setInputValue] = useState({
+    status: "",
+    name: "",
+    address: "",
+    city: "",
+    pinCode: "",
+    country: "",
+    state: "",
+    email: "",
+    phoneNo: "",
+    billingname: "",
+    billingemail: "",
+    billingcontact: "",
+    orderid: "",
+    billingorderstatus: "",
+  });
+
+  const inputChangeEventHandle = (e) => {
+    const { name, value } = e.target;
+    setInputValue({ ...inputValue, [name]: value });
+  };
+
+  const orderStatusSubmitHandle = (e) => {
+    const {
+      status,
+      name,
+      address,
+      city,
+      pinCode,
+      country,
+      state,
+      email,
+      phoneNo,
+    } = inputValue;
+    e.preventDefault();
+    dispatch(
+      updateOrder(
+        id,
+        status,
+        name,
+        address,
+        city,
+        pinCode,
+        country,
+        state,
+        email,
+        phoneNo,
+        orders && orders.orderItem && orders.orderItem[0].link
+      )
+    );
+  };
 
   useMemo(() => {
-    if (orders) {
-      dispatch(get_payment_info(orders && orders.order_info_uuid));
-      dispatch(order_shipping_info(orders && orders.order_info_uuid));
-      dispatch(order_details_info(orders && orders.order_info_uuid));
-    }
-  }, [orders && orders, dispatch]);
+    dispatch(getOrderDetails(id));
+  }, []);
 
   console.log(orders);
   useEffect(() => {
@@ -39,9 +97,35 @@ export const UpdateOrders = () => {
       alert.error(error);
       dispatch(clearErrors());
     }
-    dispatch(getOrderDetails(id));
-    dispatch(getMyorders());
-  }, [dispatch, error, alert, id]);
+    if (orders) {
+      setInputValue({
+        name: orders && orders.shippingInfo && orders.shippingInfo.fullName,
+        address: orders && orders.shippingInfo && orders.shippingInfo.address,
+        city: orders && orders.shippingInfo && orders.shippingInfo.city,
+        pinCode: orders && orders.shippingInfo && orders.shippingInfo.pinCode,
+        state: orders && orders.shippingInfo && orders.shippingInfo.state,
+        country: orders && orders.shippingInfo && orders.shippingInfo.country,
+        email: orders && orders.shippingInfo && orders.shippingInfo.email,
+        phoneNo: orders && orders.shippingInfo && orders.shippingInfo.phoneNo,
+        status: orders && orders.order_info_status,
+      });
+      dispatch(get_payment_info(orders && orders.order_info_uuid));
+      dispatch(order_shipping_info(orders && orders.order_info_uuid));
+      dispatch(order_details_info(orders && orders.order_info_uuid));
+    
+    }
+  }, [
+    dispatch,
+    error,
+    alert,
+    id,
+
+    ,
+    isUpdate,
+    cartShippingInfo,
+    orders,
+    Navigate,
+  ]);
 
   return (
     <>
@@ -62,34 +146,14 @@ export const UpdateOrders = () => {
                     <div className="order-flex-left">
                       <div className="order-d-page">
                         <h1>Order's</h1>
-                        <div className="order-containor">
-                          <div className="order-header">
-                            <div>
-                              <p>Order ID #{orders._id} details</p>
-                              <p>
-                                <NavLink
-                                  to={`/admin/update-orders/11/${
-                                    orders &&
-                                    orders.paymentInfo &&
-                                    orders.paymentInfo.id
-                                  }`}
-                                >
-                                  ddddd
-                                </NavLink>
-                              </p>
-                              <p>
-                                Payment via
-                                {orders &&
-                                  orders.paymentInfo &&
-                                  orders.paymentInfo.data &&
-                                  orders.paymentInfo.data[0] &&
-                                  orders.paymentInfo.data[0].method}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
+                     
                       </div>
-                      <UpdateOrderForm id={id} orders={orders} />
+                      <UpdateOrderForm
+                        orders={orders}
+                        inputValue={inputValue}
+                        inputChangeEventHandle={inputChangeEventHandle}
+                        orderStatusSubmitHandle={orderStatusSubmitHandle}
+                      />
                     </div>
                     <div className="order-flex-right">
                       <OrderAttribution />

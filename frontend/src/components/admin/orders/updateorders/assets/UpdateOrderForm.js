@@ -11,283 +11,416 @@ import { useNavigate } from "react-router-dom";
 import "./updateorder.css";
 import { FaPencil } from "react-icons/fa6";
 import OrderProductList from "./OrderProductList";
-const UpdateOrderForm = ({ id, orders }) => {
-  const dispatch = useDispatch();
-  const alert = useAlert();
-  const Navigate = useNavigate();
-  const { orders: ordersME } = useSelector((state) => state.myOrders);
-  const { cartItem, shippingInfo: cartShippingInfo } = useSelector(
-    (state) => state.cart
-  );
-
-  //   const { user } = useSelector((state) => state.user);
-  //   const { loading, orders, error } = useSelector((state) => state.orderDetails);
-  //   let { shippingInfo, paymentInfo, orderItem } = orders ? orders : {};
-
-  const { loading, isUpdate, error } = useSelector(
-    (state) => state.adminOrders
-  );
-
+const UpdateOrderForm = ({
+  orders,
+  inputValue,
+  inputChangeEventHandle,
+  orderStatusSubmitHandle,
+}) => {
   const [editToggle, setEditToggel] = useState(false);
-  const statusArr = ["Proccessing", "Shipped", "Delivered", "Return", "Cancle"];
-  const [inputValue, setInputValue] = useState({
-    status: "",
-    name: "",
-    address: "",
-    city: "",
-    pinCode: "",
-    country: "",
-    state: "",
-    email: "",
-    phoneNo: "",
-    billingname: "",
-    billingemail: "",
-    billingcontact: "",
-    orderid: "",
-    billingorderstatus: "",
-  });
-
-  const inputChangeEventHandle = (e) => {
-    const { name, value } = e.target;
-    setInputValue({ ...inputValue, [name]: value });
-  };
-
-  const orderStatusSubmitHandle = (e) => {
-    const {
-      status,
-      name,
-      address,
-      city,
-      pinCode,
-      country,
-      state,
-      email,
-      phoneNo,
-    } = inputValue;
-    e.preventDefault();
-    dispatch(
-      updateOrder(
-        id,
-        status,
-        name,
-        address,
-        city,
-        pinCode,
-        country,
-        state,
-        email,
-        phoneNo,
-        orders && orders.orderItem && orders.orderItem[0].link
-      )
-    );
-  };
-
-  const toggellHandel = (e) => {
-    e.preventDefault();
-    setEditToggel(!editToggle);
-  };
-  console.log(inputValue)
-  useEffect(() => {
-    setInputValue({
-      name: orders && orders.shippingInfo && orders.shippingInfo.fullName,
-      address: orders && orders.shippingInfo && orders.shippingInfo.address,
-      city: orders && orders.shippingInfo && orders.shippingInfo.city,
-      pinCode: orders && orders.shippingInfo && orders.shippingInfo.pinCode,
-      state: orders && orders.shippingInfo && orders.shippingInfo.state,
-      country: orders && orders.shippingInfo && orders.shippingInfo.country,
-      email: orders && orders.shippingInfo && orders.shippingInfo.email,
-      phoneNo: orders && orders.shippingInfo && orders.shippingInfo.phoneNo,
-      status: orders && orders.order_info_status      ,
-    });
-
-    if (error) {
-      alert.error(error);
-      dispatch(clearErrors()); // Call clearErrors as a function
-    }
-    if (isUpdate) {
-      alert.success("Update successfully");
-      Navigate("/admin/orders");
-      dispatch({
-        type: UPDATE_ORDER_RESET,
-      });
-    }
-  }, [alert, error, isUpdate, cartShippingInfo, orders, dispatch, Navigate]);
-
+  const [editToggle2, setEditToggel2] = useState(false);
+  const statusArr = ["Proccessing", "Shipped", "Delivered", "Return", "Cancle",'Failed'];
+console.log(inputValue)
   return (
-    <div>
-      {loading ? (
-        <Loader />
-      ) : (
-        <>
-          <div className="order-form-area" onSubmit={orderStatusSubmitHandle}>
-            <h2 className="sm-font-size">Order #{orders && orders._id} details</h2>
-            <p >Payment via Cash on delivery. Customer IP: 157.45.231.82</p>
-            <div className="form-flex">
-              <div className="form-text-area">
-                <h3>General</h3>
-                <div className="form-text-gen-info">
-                  <p>Date created:</p>
-                  <p>{<TimeAndDate time={orders && orders.order_info_created_date} />}</p>
-                </div>
-
-                <div className="form-text-gen-info-input">
-                  <label htmlFor="status">Status:</label>
-                  <select
-                    id="status"
-                    name="status"
-                    value={inputValue.status}
-                    onChange={inputChangeEventHandle}
-                  >
-                    <option value="">select status </option>
-                    {statusArr.map((item, i) => (
-                      <option key={i} value={item}>
-                        {item}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>Customer: Profile → View other orders →</div>
-              </div>
-              <div className="form-input-area">
-                <h4>shipping address</h4>
-                <span className="edit-order-form">
-                  <FaPencil onClick={toggellHandel} />
-                </span>
-                <div
-                  className={
-                    editToggle
-                      ? "form-input-area-text form-hide"
-                      : "form-input-area-text"
-                  }
-                >
-                  <p>
-                    <span>Name: </span>
-                    {inputValue.name}
-                  </p>
-                  <p>
-                    <span>Addreess: </span>
-                    {inputValue.address}
-                  </p>
-                  <p>
-                    <span>Pin Code: </span>
-                    {inputValue.pinCode}
-                  </p>
-                  <p>
-                    <span>State: </span>
-                    {inputValue.state}
-                  </p>
-                  <p>
-                    <span>Country: </span>
-                    {inputValue.country}
-                  </p>
-                  <p>
-                    <span>Phone no: </span>
-                    {inputValue.phoneNo}
-                  </p>
-                  <p>
-                    <span>Email: </span>
-                    {inputValue.email}
-                  </p>
-                </div>
-                <div
-                  className={
-                    !editToggle
-                      ? "form-input-area-input form-hide"
-                      : "form-input-area-input"
-                  }
-                >
-                  <div className="input-field-area input-field-width-cont">
-                    <label htmlFor="name">name</label>
-                    <input
-                      type="text"
-                      name="name"
-                      id="name"
-                      value={inputValue.name}
-                      onChange={inputChangeEventHandle}
-                    />
-                  </div>
-                  <div className="input-field-area input-field-width-cont">
-                    <label htmlFor="address">address</label>
-                    <textarea
-                      type="text"
-                      name="address"
-                      id="address"
-                      value={inputValue.address}
-                      onChange={inputChangeEventHandle}
-                    ></textarea>
-                  </div>
-                  <div className="input-field-area input-field-width-cont">
-                    <label htmlFor="city">city</label>
-                    <input
-                      type="text"
-                      name="city"
-                      id="city"
-                      value={inputValue.city}
-                      onChange={inputChangeEventHandle}
-                    />
-                  </div>
-                  <div className="input-field-area input-field-width-cont">
-                    <label htmlFor="pinCode">pinCode</label>
-                    <input
-                      type="number"
-                      name="pinCode"
-                      id="pinCode"
-                      value={inputValue.pinCode}
-                      onChange={inputChangeEventHandle}
-                    />
-                  </div>
-                  <div className="input-field-area input-field-width-cont">
-                    <label htmlFor="state">state</label>
-                    <input
-                      type="text"
-                      name="state"
-                      id="state"
-                      value={inputValue.state}
-                      onChange={inputChangeEventHandle}
-                    />
-                  </div>
-                  <div className="input-field-area input-field-width-cont">
-                    <label htmlFor="country">country</label>
-                    <input
-                      type="text"
-                      name="country"
-                      id="country"
-                      value={inputValue.country}
-                      onChange={inputChangeEventHandle}
-                    />
-                  </div>
-                  <div className="input-field-area input-field-width-cont">
-                    <label htmlFor="email">email</label>
-                    <input
-                      type="text"
-                      name="email"
-                      id="email"
-                      value={inputValue.email}
-                      onChange={inputChangeEventHandle}
-                    />
-                  </div>
-                  <div className="input-field-area input-field-width-cont">
-                    <label htmlFor="phoneNo">phoneNo</label>
-                    <input
-                      type="number"
-                      name="phoneNo"
-                      id="phoneNo"
-                      value={inputValue.phoneNo}
-                      onChange={inputChangeEventHandle}
-                    />
-                  </div>
-                </div>
-            
-              </div>
+    <>
+      <div className="order-form-area form" onSubmit={orderStatusSubmitHandle}>
+        <h2 className="sm-font-size">Order #{orders && orders._id} details</h2>
+        {orders && orders.order_info_mode === "COD" ? (
+          <p>Payment via Cash on delivery</p>
+        ) : (
+          <p>Payment via Card</p>
+        )}
+        <div className="form-flex">
+          <div className="form-fields-area">
+            <h3 className="xsm-font-size">General</h3>
+            <div className="form-text-gen-info">
+              <p>Date created:</p>
+              <p>
+                {
+                  <TimeAndDate
+                    time={orders && orders.order_info_created_date}
+                  />
+                }
+              </p>
             </div>
 
-            <Button type="submit">Update</Button>
+            <div className="form-text-gen-info-input from-space">
+              <label className="block-p xsm-font-size" htmlFor="status">
+                Status:
+              </label>
+              <select
+                id="status"
+                name="status"
+                value={inputValue.status}
+                onChange={inputChangeEventHandle}
+              >
+                <option value="">Select status </option>
+                {statusArr.map((item, i) => (
+                  <option key={i} value={item}>
+                    {item}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* <div>Customer: Profile → View other orders →</div> */}
           </div>
-          <OrderProductList orders={orders.orderItem} />
-        </>
-      )}
-    </div>
+          <div className="form-fields-area">
+            <h4 className="xsm-font-size">Billing</h4>
+            <span className="edit-order-form">
+              <FaPencil onClick={() => setEditToggel(!editToggle)} />
+            </span>
+            <div
+              className={
+                editToggle
+                  ? "form-input-area-text form-hide"
+                  : "form-input-area-text"
+              }
+            >
+              <p className="xsm-font-size">
+             
+                {inputValue.name}
+              </p>
+              <p className="xsm-font-size">
+               
+                {inputValue.address}
+              </p>
+              <p className="xsm-font-size">
+             
+                {inputValue.pinCode}
+              </p>
+              <p className="xsm-font-size">
+              
+                {inputValue.state}
+              </p>
+              <p className="xsm-font-size">
+              
+                {inputValue.country}
+              </p>
+              <p className="xsm-font-size">
+               
+                {inputValue.phoneNo}
+              </p>
+              <p className="xsm-font-size">
+              
+                {inputValue.email}
+              </p>
+            </div>
+            <div
+              className={
+                !editToggle
+                  ? "row col-md-12 flex-warp form-hide"
+                  : "row col-md-12 flex-warp"
+              }
+            >
+              <div className="col-md-12">
+                <label className="block-p xsm-font-size" htmlFor="name">
+                  name:
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  id="name"
+                  value={inputValue.name}
+                  onChange={inputChangeEventHandle}
+                />
+              </div>
+              <div className="col-md-12">
+                <label className="block-p xsm-font-size" htmlFor="Company">
+                  Company:
+                </label>
+                <input
+                  type="text"
+                  name="Company"
+                  id="Company"
+                  value={inputValue.Company}
+                  onChange={inputChangeEventHandle}
+                />
+              </div>
+              <div className="col-md-12">
+                <label className="block-p xsm-font-size" htmlFor="address">
+                  Address:
+                </label>
+                <textarea
+                  type="text"
+                  name="address"
+                  id="address"
+                  value={inputValue.address}
+                  onChange={inputChangeEventHandle}
+                ></textarea>
+              </div>
+              <div className="col-md-6">
+                <label className="block-p xsm-font-size" htmlFor="city">
+                  City:
+                </label>
+                <input
+                  type="text"
+                  name="city"
+                  id="city"
+                  value={inputValue.city}
+                  onChange={inputChangeEventHandle}
+                />
+              </div>
+              <div className="col-md-6">
+                <label className="block-p xsm-font-size" htmlFor="pinCode">
+                  Pin code:
+                </label>
+                <input
+                  type="number"
+                  name="pinCode"
+                  id="pinCode"
+                  value={inputValue.pinCode}
+                  onChange={inputChangeEventHandle}
+                />
+              </div>
+              <div className="col-md-6">
+                <label className="block-p xsm-font-size" htmlFor="state">
+                  State:
+                </label>
+                <input
+                  type="text"
+                  name="state"
+                  id="state"
+                  value={inputValue.state}
+                  onChange={inputChangeEventHandle}
+                />
+              </div>
+              <div className="col-md-6">
+                <label className="block-p xsm-font-size" htmlFor="country">
+                  country:
+                </label>
+                <input
+                  type="text"
+                  name="country"
+                  id="country"
+                  value={inputValue.country}
+                  onChange={inputChangeEventHandle}
+                />
+              </div>
+              <div className="col-md-6">
+                <label className="block-p xsm-font-size" htmlFor="email">
+                  Email:
+                </label>
+                <input
+                  type="text"
+                  name="email"
+                  id="email"
+                  value={inputValue.email}
+                  onChange={inputChangeEventHandle}
+                />
+              </div>
+              <div className="col-md-6">
+                <label className="block-p xsm-font-size" htmlFor="phoneNo">
+                  Phone no:
+                </label>
+                <input
+                  type="number"
+                  name="phoneNo"
+                  id="phoneNo"
+                  value={inputValue.phoneNo}
+                  onChange={inputChangeEventHandle}
+                />
+              </div>
+              <div className="col-md-12">
+                <label
+                  className="block-p xsm-font-size"
+                  htmlFor="Payment method"
+                >
+                  Payment method:
+                </label>
+                <input
+                  type="text"
+                  name="Payment_method"
+                  id="Payment method"
+                  value={inputValue.Payment_method}
+                  onChange={inputChangeEventHandle}
+                />
+              </div>
+              <div className="col-md-12">
+                <label
+                  className="block-p xsm-font-size"
+                  htmlFor="Transaction ID"
+                >
+                  Transaction ID:
+                </label>
+                <input
+                  type="text"
+                  name="Transaction_ID"
+                  id="Transaction ID"
+                  value={inputValue.Transaction_ID}
+                  onChange={inputChangeEventHandle}
+                />
+              </div>
+            </div>
+          </div>
+          <div className="form-fields-area">
+            <h4 className="xsm-font-size">Shipping</h4>
+            <span className="edit-order-form">
+              <FaPencil onClick={() => setEditToggel2(!editToggle2)} />
+            </span>
+            <div
+              className={
+                editToggle2
+                  ? "form-input-area-text form-hide"
+                  : "form-input-area-text"
+              }
+            >
+              <p className="xsm-font-size">
+                <span>Name: </span>
+                {inputValue.name}
+              </p>
+              <p className="xsm-font-size">
+                <span>Addreess: </span>
+                {inputValue.address}
+              </p>
+              <p className="xsm-font-size">
+                <span>Pin Code: </span>
+                {inputValue.pinCode}
+              </p>
+              <p className="xsm-font-size">
+                <span>State: </span>
+                {inputValue.state}
+              </p>
+              <p className="xsm-font-size">
+                <span>Country: </span>
+                {inputValue.country}
+              </p>
+              <p className="xsm-font-size">
+                <span>Phone no: </span>
+                {inputValue.phoneNo}
+              </p>
+              <p className="xsm-font-size">
+                <span>Email: </span>
+                {inputValue.email}
+              </p>
+            </div>
+            <div
+              className={
+                !editToggle2
+                  ? "row col-md-12 flex-warp form-hide"
+                  : "row col-md-12 flex-warp"
+              }
+            >
+              <div className="col-md-12">
+                <label className="block-p xsm-font-size" htmlFor="name">
+                  name:
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  id="name"
+                  value={inputValue.name}
+                  onChange={inputChangeEventHandle}
+                />
+              </div>
+              <div className="col-md-12">
+                <label className="block-p xsm-font-size" htmlFor="Company">
+                  Company:
+                </label>
+                <input
+                  type="text"
+                  name="Company"
+                  id="Company"
+                  value={inputValue.Company}
+                  onChange={inputChangeEventHandle}
+                />
+              </div>
+              <div className="col-md-12">
+                <label className="block-p xsm-font-size" htmlFor="address">
+                  Address:
+                </label>
+                <textarea
+                  type="text"
+                  name="address"
+                  id="address"
+                  value={inputValue.address}
+                  onChange={inputChangeEventHandle}
+                ></textarea>
+              </div>
+              <div className="col-md-6">
+                <label className="block-p xsm-font-size" htmlFor="city">
+                  City:
+                </label>
+                <input
+                  type="text"
+                  name="city"
+                  id="city"
+                  value={inputValue.city}
+                  onChange={inputChangeEventHandle}
+                />
+              </div>
+              <div className="col-md-6">
+                <label className="block-p xsm-font-size" htmlFor="pinCode">
+                  Pin code:
+                </label>
+                <input
+                  type="number"
+                  name="pinCode"
+                  id="pinCode"
+                  value={inputValue.pinCode}
+                  onChange={inputChangeEventHandle}
+                />
+              </div>
+              <div className="col-md-6">
+                <label className="block-p xsm-font-size" htmlFor="state">
+                  State:
+                </label>
+                <input
+                  type="text"
+                  name="state"
+                  id="state"
+                  value={inputValue.state}
+                  onChange={inputChangeEventHandle}
+                />
+              </div>
+              <div className="col-md-6">
+                <label className="block-p xsm-font-size" htmlFor="country">
+                  country:
+                </label>
+                <input
+                  type="text"
+                  name="country"
+                  id="country"
+                  value={inputValue.country}
+                  onChange={inputChangeEventHandle}
+                />
+              </div>
+
+              <div className="col-md-12">
+                <label className="block-p xsm-font-size" htmlFor="phoneNo">
+                  Phone no:
+                </label>
+                <input
+                  type="number"
+                  name="phoneNo"
+                  id="phoneNo"
+                  value={inputValue.phoneNo}
+                  onChange={inputChangeEventHandle}
+                />
+              </div>
+              <div className="col-md-12">
+                <label
+                  className="block-p xsm-font-size"
+                  htmlFor="Customer provided note"
+                >
+                  Customer provided note:
+                </label>
+                <textarea
+                  type="text"
+                  name="Customer_provided_note"
+                  id="Customer_provided_note"
+                  value={inputValue.Customer_provided_note}
+                  onChange={inputChangeEventHandle}
+                ></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <Button type="submit">Update</Button>
+      </div>
+      <OrderProductList orders={orders.orderItem} />
+    </>
   );
 };
 

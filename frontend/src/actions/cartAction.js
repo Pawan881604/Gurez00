@@ -6,7 +6,7 @@ import {
 import axios from "axios";
 
 export const addItemsToCart =
-  (id, quantity, price) => async (dispatch, getState) => {
+  (id, quantity, price,label) => async (dispatch, getState) => {
     const { data } = await axios.get(`/api/v1/product/${id}`);
     console.log(data);
     dispatch({
@@ -19,7 +19,7 @@ export const addItemsToCart =
         price: price ? price : data.Product.product_sale_price,
         path: data.Product.product_images[0].path,
         category: data.Product.product_category[0].slug,
-        quantity,
+        quantity,label
       },
     });
     localStorage.setItem("cartItems", JSON.stringify(getState().cart.cartItem));

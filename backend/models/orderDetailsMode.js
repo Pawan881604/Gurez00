@@ -11,6 +11,17 @@ const orderDetailsSchema = new mongoose.Schema({
     type: String,
     ref: "order",
   },
+  product_Items: [
+    {
+      type: mongoose.Schema.Types.Mixed,
+    },
+  ],
+  product_id: [
+    {
+      type: Number,
+      ref: "Product",
+    },
+  ],
   product_uuid: [
     {
       type: String,

@@ -38,7 +38,8 @@ const ProductDetails = () => {
   const dispatch = useDispatch();
   const alert = useAlert();
   const Navigate = useNavigate();
-  const [labelValue, setLabelValue] = useState("");
+  const [label, setLabel] = useState("");
+  
   // //--------------- useSelector ----------------------------
   const { loding, product, error } = useSelector(
     (state) => state.productDetails
@@ -77,7 +78,7 @@ const ProductDetails = () => {
       addItemsToCart(
         id,
         quentity,
-        variantPriceValue.length === 0 ? defaultPrice : variantPriceValue[0]
+        variantPriceValue.length === 0 ? defaultPrice : variantPriceValue[0],label
       )
     );
     alert.success("Item Added to Cart");
@@ -93,7 +94,7 @@ const ProductDetails = () => {
     dispatch(
       wishListAction(
         id,
-        variantPriceValue.length === 0 ? defaultPrice : variantPriceValue[0]
+        variantPriceValue.length === 0 ? defaultPrice : variantPriceValue[0],label
       )
     );
     dispatch(CreateBookmarkAction(wishlist_product_id, wishlist_product_uuid));
@@ -106,7 +107,7 @@ const ProductDetails = () => {
       addItemsToCart(
         id,
         quentity,
-        variantPriceValue.length === 0 ? defaultPrice : variantPriceValue[0]
+        variantPriceValue.length === 0 ? defaultPrice : variantPriceValue[0],label
       )
     );
     Navigate("/cart");
@@ -195,6 +196,7 @@ const ProductDetails = () => {
                         product={product && product}
                         setVariantPriceValue={setVariantPriceValue}
                         variantPriceValue={variantPriceValue}
+                        setLabel={setLabel}
                       />
                       <div className="product-purchase">
                         <AddQuantitBtns

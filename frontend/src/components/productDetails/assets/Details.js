@@ -5,9 +5,14 @@ import { StarComponent } from "./StarComponent";
 import { useSelector } from "react-redux";
 import { IoIosArrowForward } from "react-icons/io";
 import Currency from "../../layout/currency/Currency";
-const Details = ({ product, setVariantPriceValue, variantPriceValue }) => {
+const Details = ({
+  product,
+  setVariantPriceValue,
+  variantPriceValue,
+  setLabel,
+}) => {
   const { loading, postmeta } = useSelector((state) => state.postMeta);
-
+  const [label_toggle,set_label_toggle]= useState(true)
   //review lenght
   const reviewLength =
     product && product.reviewsids && product.reviewsids.length;
@@ -185,7 +190,7 @@ const Details = ({ product, setVariantPriceValue, variantPriceValue }) => {
           <div className="variations">
             <div className="label">
               <label>{postmeta && postmeta.meta_key}</label>
-              <select onChange={(e) => setLabelValue(e.target.value)}>
+              <select onClick={(e) => { setLabel(e.target.value); set_label_toggle(false); }} onChange={(e) => setLabelValue(e.target.value)}>
                 <option value={""}>Choose one</option>
                 {postmeta &&
                   postmeta.meta_value &&
@@ -199,9 +204,12 @@ const Details = ({ product, setVariantPriceValue, variantPriceValue }) => {
                         return key === productValue;
                       }
                     );
-
+                    
+                   if(i === selectedIndex && label_toggle ){
+                    setLabel(key)
+                   }
                     return (
-                      <option key={i} selected={i === selectedIndex}>
+                      <option  key={i} selected={i === selectedIndex}>
                         {key}
                       </option>
                     );
