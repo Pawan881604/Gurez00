@@ -1,0 +1,37 @@
+.slider-containor {
+  max-height: 260px;
+}
+.slider-containor img {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.slider-containor {
+  position: relative;
+  transition: all 0.3s ease-in-out;
+}
+
+.slider-containor:hover .custom-arrow {
+  display: flex;
+}
+.custom-arrow {
+  position: absolute;
+  z-index: 5;
+  top: 0px;
+  height: 250px;
+  background: linear-gradient(-270deg, rgba(234, 237, 237, 0), #f5f5f56b);
+  width: 50px;
+  border: 1.5px solid #000;
+  align-items: center;
+  cursor: pointer;
+  justify-content: center;
+  transition: all 0.3s ease-in;
+  outline: 2px solid #fff;
+  display: none;
+}
+.custom-arrow svg {
+  font-size: 40px;
+}
+.custom-next-arrow {
+  right: 0px;
+}

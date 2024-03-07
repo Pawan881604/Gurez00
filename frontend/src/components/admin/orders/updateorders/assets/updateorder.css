@@ -1,0 +1,155 @@
+.form-flex {
+  display: flex;
+  width: 100%;
+}
+.form-text-area {
+  width: 50%;
+}
+.form-input-area {
+  width: 50%;
+}
+.form-text-gen-info p {
+  margin: 10px 0;
+  font-size: 18px;
+}
+.form-text-gen-info-input label {
+  display: block;
+  font-size: 18px;
+}
+.form-text-gen-info-input select {
+  margin: 10px 0;
+  max-width: 80%;
+  font-size: 18px;
+  padding: 10px;
+  width: 100%;
+}
+.form-input-area-text p {
+  font-size: 18px;
+  margin: 10px 0;
+}
+.form-input-area-text p span {
+  display: block;
+  font-weight: 600;
+}
+.form-input-area-input .input-field-area {
+  width: 100%;
+}
+.order-form-areax .MuiButtonBase-root {
+  width: 100%;
+}
+.form-hide {
+  display: none;
+}
+.form-input-area {
+  position: relative;
+}
+.edit-order-form {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+}
+.edit-order-form svg {
+  cursor: pointer;
+}
+.order-item-area-cont,
+.order-form-area {
+  padding: 40px 0 0;
+  background: #fff;
+  margin: 20px 0;
+  padding: 15px;
+  border-radius: 10px;
+  transition: all 0.3s ease-in-out;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  border: none;
+}
+.sm-font-size {
+  font-size: 16px !important;
+}
+form button[type="submit"] {
+  width: 100%;
+  padding: 10px;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  background: transparent;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease-in;
+  margin-top: 40px;
+}
+form button[type="submit"]:hover {
+  background: #e31e25;
+  color: #fff;
+}
+.order-item-area,
+.order-item-content-area {
+  display: flex;
+  width: 100%;
+  gap: 18px;
+}
+.order-img-area {
+  max-width: 100px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.order-img-area img {
+  width: 100%;
+}
+.order-item-content-area {
+  width: 92%;
+}
+.order-item-name {
+  width: 100%;
+  border-right: 1px solid #000;
+  border-left: 1px solid #000;
+  padding: 10px;
+}
+.order-item-price {
+  width: 20%;
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+}
+
+.order-item-amount-total {
+  /* height:200px; */
+  padding: 40px 20px 0;
+  display: grid;
+  align-items: end;
+  justify-content: end;
+}
+.order-item-amount-total > div {
+  display: flex;
+  width: 250px;
+  gap: 20px;
+  line-height: 25px;
+}
+.order-item-amount-total > div span:nth-child(1) {
+  width: 70%;
+  font-size: 18px;
+}
+.order-item-amount-total > div span:nth-child(2) {
+  width: 30%;
+}
+
+/* update-order */
+.ad-body-full {
+  width: 100% !important;
+}
+.order-flex {
+  display: flex;
+  justify-content: space-between;
+}
+.order-flex-left {
+  width: 70%;
+}
+.order-flex-right {
+  width: 30%;
+}
+.order-attribution-dataset {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.order-attribution-div h4 {
+  color: #000;
+}

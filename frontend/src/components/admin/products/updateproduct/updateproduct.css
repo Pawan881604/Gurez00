@@ -1,0 +1,137 @@
+.product-form {
+  border: none;
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: #fff;
+}
+.update-left-side-co{
+  width: 70%;
+}
+.input-field- {
+  display: flex;
+  align-items: center;
+}
+.-input-upload {
+  width: 30%;
+}
+.input-img-area {
+  width: 300px;
+}
+.input-img-area ul {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0;
+}
+.input-img-area ul li {
+  width: 150px;
+  overflow: hidden;
+  border: #b7b3b3 1px dashed;
+  height: 150px;
+  padding: 10px;
+}
+.input-img-area ul span {
+  display: block;
+  overflow: hidden;
+  margin: 0px;
+  height: 130px;
+  max-width: 160px;
+}
+.input-img-area ul li img {
+  width: 100%;
+  object-fit: cover;
+  object-position: 0px -14px;
+  scale: 1.5;
+}
+.input-field-area {
+  position: relative;
+  width: 100%;
+  border: 2px solid #b7b3b3;
+  padding: 15px 10px;
+  margin: 20px 0;
+}
+.input-field-area input,
+.input-field-area textarea {
+  border: none;
+  font-size: 16px;
+  width: 100%;
+}
+.input-field-area label {
+  position: absolute;
+  top: -10px;
+  background: #fff;
+  padding: 0 5px;
+  font-size: 16px;
+}
+.input-field-width-cont {
+  width: 32%;
+  display: inline-flex;
+}
+.input-field-width-cont {
+  margin-right: 10px;
+}
+.all-products-title h1 {
+  text-align: center;
+  margin: 30px 0;
+}
+.c-img-list-none {
+  display: none !important;
+}
+.product-sidebar-containor{
+  padding: 10px 20px;
+}
+.cat-containor li label{
+  cursor: pointer;
+}
+.MuiDataGrid-columnHeader[data-field="stock"],
+.MuiDataGrid-cell[data-field="stock"],
+.MuiDataGrid-columnHeader[data-field="price"],
+.MuiDataGrid-cell[data-field="price"] {
+  min-width: 150px !important;
+  max-width: 150px !important;
+  width: 100% !important;
+}
+
+.MuiDataGrid-columnHeader[data-field="name"],
+.MuiDataGrid-cell[data-field="name"] {
+  min-width: 300px !important;
+  max-width: 300px !important;
+  width: 100% !important;
+}
+.input-field-area span{
+  position:absolute;
+  top:-15px;
+  background-color:#000;
+  color:#fff;
+  padding:3px;
+  right:20px;
+}
+.color-add{
+  background:red !important;
+}
+.input-field-area span{
+  position:unset !important;
+  background:#fff;
+}
+.jodit-status-bar__item {
+  display:none;
+  }
+.non-Primary-containor{
+  display: flex;
+  flex-wrap: wrap;
+}
+.non-Primary-containor div{
+  width: 50%;
+  padding: 5px;
+}
+  .create-page-contaionr{
+    display:flex;
+}
+.from-contaionr{
+    width:70%;
+}
+.product-sidebar-containor{
+     width:30%;
+}
+.non-Primary-inactive{
+  display: none;
+}

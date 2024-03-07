@@ -1,0 +1,26 @@
+.mob-icon {
+  display: none;
+  justify-content: space-around;
+  padding: 20px 0;
+  box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+  opacity: 1;
+  background: white;
+  z-index: 100;
+  border-radius: 20px 20px 0 0;
+}
+.mob-icon {
+  position: fixed;
+  width: 100%;
+  bottom: -1%;
+}
+.mob-icon svg {
+  font-size: 24px;
+}
+.bottom-active {
+  color: #31ad32;
+}
+@media screen and (max-width: 768px) {
+  .mob-icon {
+    display: flex;
+  }
+}

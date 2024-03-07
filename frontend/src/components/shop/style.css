@@ -1,0 +1,142 @@
+#prod-cont {
+  display: flex;
+  padding: 0px;
+  gap: 10px;
+}
+.shop-page {
+  padding: 40px 0;
+}
+aside {
+  width: 25%;
+}
+.sidebar-cont {
+  margin-bottom: 40px;
+  transition: all 0.3s ease-in-out;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  border-radius: 10px;
+  padding-bottom: 15px;
+  background-color: #fff;
+  /* position: sticky;
+    position: -webkit-sticky;
+    top: 40px; */
+}
+.p-sho-cont {
+  width: 75%;
+  position: relative;
+  padding: 0px 10px;
+}
+.p-sho-cont .product-card {
+  width: 100%;
+}
+.product-card {
+  position: relative;
+}
+.product-card_btn {
+  bottom: 10px;
+  width: 100%;
+}
+.shop-page .product-details {
+  text-align: center;
+}
+.shop-page .rev-are{
+  justify-content: center;
+}
+.shop-page .product-price p{
+  font-size: 16px;
+}
+.shop-page .product-details h3 {
+  margin: 5px 0 0 0;
+}
+.shop-page .product-details h3 a {
+  width: 260px;
+  white-space: nowrap;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+  font-weight: 600;
+}
+
+.pagination {
+  display: flex;
+  max-width: 400px;
+  margin: 0 auto;
+  justify-content: center;
+}
+
+.page-items {
+  width: 50px;
+  padding: 10px;
+  text-align: center;
+  background: #f5f5f5;
+  border: 1px solid #00000008;
+  cursor: pointer;
+}
+.pageItemActive {
+  background: #e21e219c;
+}
+.pageItemActive a {
+  color: #fff !important;
+}
+.p-sho-cont {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: 550px 550px;
+  gap: 10px;
+}
+@media only screen and (max-width: 900px) {
+  #prod-cont {
+    flex-direction: column;
+  }
+  .p-sho-cont {
+    width: 100%;
+  }
+  .p-sho-cont {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .shop-page {
+    padding: 0px 0;
+  }
+  aside {
+    width: 100%;
+  }
+  .aside-bar-cont {
+    position: absolute;
+    left: -100%;
+  }
+  .mob-filter {
+    padding: 10px;
+  }
+  .mob-filter p {
+    display: inline;
+    cursor: pointer;
+  }
+  .mob-filter svg {
+    font-size: 14px;
+  }
+  .sidebar-active {
+    left: 0px;
+    top: 70px;
+  }
+  .section-cont {
+    position: relative;
+  }
+  .prod-cont .sidebar-active {
+    background: #fff;
+    height: 100%;
+    z-index: 50;
+  }
+}
+@media only screen and (max-width: 767px) {
+  .p-sho-cont {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .p-sho-cont {
+    padding: 0px;
+  }
+}
+@media only screen and (max-width: 480px) {
+  .p-sho-cont {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}

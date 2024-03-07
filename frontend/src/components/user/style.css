@@ -1,0 +1,102 @@
+.registration-section {
+  background-color: #78727612;
+}
+.my-account-row {
+  max-width: 500px;
+  margin: 0 auto;
+  overflow: hidden;
+  padding: 100px 0px 100px;
+}
+.my-account-box {
+  position: relative;
+  max-width: 95%;
+  margin: 0 auto;
+}
+.form-toggel {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+.login-form .input-list label {
+  width: 20%;
+}
+.form-toggel h2 {
+  cursor: pointer;
+  padding: 10px 0;
+}
+.my-account-box span {
+  position: absolute;
+  width: 50%;
+  display: inline-block;
+  transition: all 0.3s ease-in-out;
+  background: #fff !important;
+  height: 100%;
+  top: 0px;
+  z-index: 0;
+  border-bottom: 4px solid #fb7217 !important;
+}
+.my-account-box .shiftToRight {
+  right: 0px;
+  transition: all 0.3s ease-in-out;
+}
+.input-list img {
+  max-width: 50px;
+}
+.form-cont {
+  display: flex;
+}
+.input-list input[type="submit"] {
+  margin-top: 10px;
+  font-weight: 600;
+  font-size: 18px;
+  cursor: pointer;
+}
+.my--form {
+  width: 100%;
+  flex: 0 0 auto;
+  transform: translateX(0%);
+  padding: 0px 10px;
+}
+.my--form form {
+  margin: 0px;
+}
+.shiftToNeutralForm {
+  transform: translateX(-100%) !important;
+}
+.my-form-area {
+  padding: 0px 0px;
+}
+
+form {
+  border: 1px solid #000;
+  border-radius: 5px;
+  padding: 20px;
+}
+.login-form input,
+.otp-form-area input {
+  height: 40px;
+  width: 100%;
+  border-radius: 5px;
+  border: 1px solid #000;
+  margin-bottom: 10px;
+}
+.login-form .input-list label {
+  width: 20%;
+}
+
+.otp-form-section {
+  background-color: #78727612;
+  position: relative;
+}
+.otp-form-area {
+  max-width: 500px;
+  margin: 0px auto;
+  padding: 150px 0;
+}
+@media only screen and (max-width: 767px) {
+  .login-form .input-list label {
+    width: 30%;
+  }
+}

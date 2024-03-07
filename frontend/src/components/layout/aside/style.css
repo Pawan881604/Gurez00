@@ -1,0 +1,94 @@
+.side-bar {
+  padding: 20px;
+}
+.inner-aside-filter {
+  display: flex;
+  gap: 5px;
+}
+.inner-aside-filter span {
+  font-weight: 600;
+}
+
+/* //----------price-categories----------- */
+.aside-price-categories .MuiTypography-root {
+  font-weight: 600 !important;
+  margin-top: 15px;
+}
+.aside-price-categories ul {
+  padding: 10px 0;
+}
+
+.aside-price-categories li {
+
+  margin: 1px 0;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.3s ease-in;
+  border-radius: 10px;
+}
+.parent-cate-list {
+  padding: 10px 15px 10px 5px;
+  border-radius: 10px;
+  margin: 1px 0;
+  font-weight: 600;
+  font-size: 16px;
+}
+.parent-cate-list:hover {
+  background: var(--G-green);
+  color: var(--g-white) !important;
+}
+.aside-price-categories ul ul li a {
+  font-size: 14px;
+  padding: 3px 10px;
+  display: block;
+}
+ .parent-cate-list{
+  padding: 3px 10px;
+  display: block;
+}
+
+.aside-price-categories ul ul li:hover {
+  background: var(--G-green);
+}
+.aside-price-categories ul ul li:hover a {
+  color: var(--g-white) !important;
+}
+
+.cat-active {
+  padding: 10px;
+  background: #e21e219c;
+  color: #fff;
+  margin: 1px 0;
+  border-radius: 10px;
+}
+
+/* //------price----filter */
+.aside-price-filter .MuiTypography-root {
+  margin-bottom: 13px;
+  font-weight: 600 !important;
+}
+.price-filter-cont p {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+.price-filter-cont p span {
+  background: #fff;
+  width: 80px;
+  padding: 10px;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  border-radius: 7px;
+}
+
+.filter-ac button {
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+
+  margin-top: 20px;
+
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease-in;
+}
