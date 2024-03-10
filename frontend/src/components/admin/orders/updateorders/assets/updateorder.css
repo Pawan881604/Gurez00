@@ -46,7 +46,12 @@
 .form h2 {
   margin: 0px;
 }
-
+.order-flex-right {
+  padding: 0px 0px 0px 15px;
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+}
 .form-input-area-input .input-field-area {
   width: 100%;
 }
@@ -171,10 +176,10 @@ form button[type="submit"]:hover {
   background: #f8f8f8;
   line-height: 2em;
 }
-.coupon-code{
+.coupon-code {
   border: #dfdfdf 1px solid;
   background: #fff;
-  padding: 2px 20px ;
+  padding: 2px 20px;
   font-size: 14px;
 }
 .thumb {

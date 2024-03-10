@@ -58,6 +58,7 @@ const orderSchema = new mongoose.Schema({
   },
   order_info_delivery_date: {
     type: Date,
+    default: null,
   },
   order_info_created_date: {
     type: Date,

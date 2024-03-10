@@ -1,297 +1,328 @@
 const catchAsyncError = require("../middleware/catchAsyncError");
-const mongoose = require("mongoose");
+const CountModel = require("../models/CountModel");
+const OrdersPaymentsInfoModel = require("../models/OrdersPaymentsInfoModel");
+const orderDetailsMode = require("../models/orderDetailsMode");
+const axios = require("axios");
+const order = require("../models/orderModels");
+const orderShippingInfoModel = require("../models/orderShippingInfoModel");
+const product = require("../models/productModels");
 const ErrorHandler = require("../utils/errorhandler");
+const { sendOrderEmail, sendOrderStatusEmail } = require("../utils/sendEmail");
 const MasrterCouponModel = require("../models/MasrterCouponModel");
-const productModels = require("../models/productModels");
-const orderModels = require("../models/orderModels");
-exports.createCouponMaster = catchAsyncError(async (req, res, next) => {
-  const {
-    allowFreeShipping,
-    camount,
-    couponExpiryDate,
-    description,
-    dtype,
-    emails,
-    excludeCategories,
-    excludeProducts,
-    excludeSaleItems,
-    individualUseOnly,
-    limitUsageToXItems,
-    minimumSpend,
-    maximumSpend,
-    productCategories,
-    products,
-    usageLimitPerCoupon,
-    usageLimitPerUser,
-    name,
-    uuid,
-  } = req.body;
-  const user = req.user._id;
 
-  const newMasterCoupon = await MasrterCouponModel.create({
-    master_coupon_uuid: uuid,
-    master_coupon_code: name,
-    master_coupon_name: name,
-    master_coupon_desc: description,
-    master_coupon_type: dtype,
-    master_coupon_email: emails,
-    master_coupon_limitUsageToXItems: limitUsageToXItems,
-    master_coupon_amount: camount,
-    master_coupon_start_date: new Date(), // Use Date object for the current date and time
-    master_coupon_end_date: couponExpiryDate,
-    master_coupon_allowFreeShipping: allowFreeShipping,
-    master_coupon_min_spend: minimumSpend,
-    master_coupon_max_spend: maximumSpend,
-    master_coupon_excludeSaleItems: excludeSaleItems,
-    master_coupon_products: products || [],
-    // master_coupon_excludeProducts: excludeProducts,
-    master_coupon_categories: productCategories || [],
-    // master_coupon_exclude_Categories: excludeCategories || [],
-    master_coupon_total_usage_limit: usageLimitPerCoupon,
-    master_coupon_total_userwise_limit: usageLimitPerUser || [],
-    master_coupon_created_date: new Date(), // Use Date object for the current date and time
-    master_coupon_modifed_date: new Date(), // Use Date object for the current date and time
-    master_coupon_individualUseOnly: individualUseOnly,
-    user,
+//------create new order
+exports.createOrder = catchAsyncError(async (req, res, next) => {
+  const { order_details, payment_mode } = req.body;
+  const count = await CountModel.findOne({ entityName: "User" });
+  const order_info = JSON.parse(order_details);
+
+  const {
+    shippinginfo,
+    orderItem,
+    itemPrice,
+    taxPrice,
+    shippingPrice,
+    totalPrice,
+    uuid,
+    coupon_uuid,coupon_code,
+    coupon_discounttype,
+    coupon_discount,
+    totalQuantity,
+  } = order_info;
+
+  const Order = await order.create({
+    _id: count && count.count !== null ? count.orderCount : 1,
+    order_info_uuid: uuid,
+    order_info_total_price: totalPrice,
+    order_info_total_order_quantity: totalQuantity,
+    order_info_total_discount: coupon_discount,
+    order_info_total_coupon_discount: coupon_discount,
+    order_info_discount_type: coupon_discounttype,
+    order_info_shipping_charges: shippingPrice,
+    order_info_gst: taxPrice,
+    master_coupon_uuid: coupon_uuid,
+    master_coupon_code: coupon_code,
+    order_info_grand_total: itemPrice + taxPrice + shippingPrice,
+    user: req.user._id,
+    order_info_status: payment_mode === "COD" ? "Proccessing" : "Failed",
+    order_info_mode: payment_mode ,
   });
-  console.log(newMasterCoupon);
+  const shippingStatus = await orderShippingInfoModel.create({
+    shipping_uuid: shippinginfo.shipping_uuid,
+    fullName: shippinginfo.fullName,
+    phoneNo: shippinginfo.phoneNo,
+    email: shippinginfo.email,
+    address: shippinginfo.address,
+    country: shippinginfo.country,
+    state: shippinginfo.state,
+    city: shippinginfo.city,
+    pinCode: shippinginfo.pinCode,
+    order_info_uuid: Order.order_info_uuid,
+  });
+  // // const orderConfermation = {
+  // //   shippingInfo: shippinginfo,
+  // //   orderItem,
+  // //   mode,
+  // // };
+
+  // // sendOrderEmail(orderConfermation);
+  // //   order details
+  const product_uuid = [];
+  const product_id = [];
+  let product_Total_Price = 0;
+  let product_Total_Quantity = 0;
+
+  orderItem &&
+    orderItem.forEach((item, i) => {
+      product_uuid.push(item.product_uuid);
+      product_id.push(item.productId);
+      product_Total_Price += item.price * item.quantity;
+      product_Total_Quantity += item.quantity;
+    });
+  
+  const order_Details_length = await orderDetailsMode.countDocuments();
+  const orderDetails = await orderDetailsMode.create({
+    order_detail_id: order_Details_length + 1,
+    order_info_uuid: uuid,
+    product_Items:orderItem,
+    product_id:product_id,
+    product_uuid: product_uuid,
+    order_info_detail_price: product_Total_Price,
+    order_detail_quantity: product_Total_Quantity,
+    order_detail_created_date: Order.order_info_created_date,
+  });
+
   res.status(201).json({
     success: true,
-    message: "Coupon added successfully",
-    // newMasterCoupon,
+    Order,
   });
 });
 
-exports.getAllMasterCoupon = catchAsyncError(async (req, res, next) => {
-  const allcoupon = await MasrterCouponModel.find().populate([
+// get single order
+exports.getSingleOrder = catchAsyncError(async (req, res, next) => {
+  const Order = await order.findById(req.params.id).populate([
     { path: "user", model: "User" },
+    // {path:'master_coupon_uuid',model:'masterCoupon'}
   ]);
 
-  res.status(200).json({
+  if (!Order) {
+    return next(new ErrorHandler("order not found with this is", 404));
+  }
+  res.status(201).json({
     success: true,
-    allcoupon,
+    Order,
   });
 });
 
-exports.verifyMasterCoupon = catchAsyncError(async (req, res, next) => {
-  const { coupon, ids } = req.body;
-  const stringArray = [ids];
-  const numbersArray = stringArray[0]
-    .split(",")
-    .map((str) => parseInt(str, 10));
-  // let c = isExist.master_coupon_products[0]
-  //   .split(",")
-  //   .map((str) => parseInt(str, 10));
+// get logged in user order
+exports.myOrders = catchAsyncError(async (req, res, next) => {
+  const Orders = await order.find({ user: req.user._id });
+  Orders.reverse();
+  res.status(201).json({
+    success: true,
+    Orders,
+  });
+});
 
-  const data = await applyCoupon(coupon, stringArray);
+// get all ordwers   ----------- admin
 
-  async function applyCoupon(coupon, numbersArray, user) {
-    if (await isValidCoupon(coupon)) {
-      const current = Date.now();
-      const currentDate = new Date(current);
+exports.getAllOrders = catchAsyncError(async (req, res, next) => {
+  const Orders = await order.find();
+  let totalAmount = 0;
+  let max = [];
+  // Orders.forEach((order) => {
+  //   totalAmount += order.totalPrice;
+  //   order.orderItem.forEach((item) => {
+  //     max.push(item.productId);
+  //   });
+  // });
 
-      if (await isWithinDateRange(currentDate, coupon)) {
-        const couponData = await MasrterCouponModel.findOne({
-          master_coupon_code: coupon,
-        });
-        const Orders = await orderModels.find({ coupon });
-        const limit = 500;
-        if (
-          await isBelowUsageLimit(
-            couponData.master_coupon_total_usage_limit,
-            // Orders.length
-            limit
-          )
-        ) {
-          const couponData = await MasrterCouponModel.findOne({
-            master_coupon_code: coupon,
-          });
+  // const productFrequency = max.reduce((acc, productId) => {
+  //   acc[productId] = (acc[productId] || 0) + 1;
+  //   return acc;
+  // }, {});
 
-          // Apply discount based on coupon type
-          if (couponData.master_coupon_type === "Percentage discount") {
-            return applyCartPercentageDiscount(
-              "percentage",
-              couponData.master_coupon_name,
-              couponData.master_coupon_amount,
-              couponData.master_coupon_uuid
-            );
-          } else if (
-            couponData.master_coupon_type === "Fixed basket discount"
-          ) {
-            return applyCartFixedBasketDiscount(
-              "fix items",
-              couponData.master_coupon_name,
-              couponData.master_coupon_amount,
-              couponData.master_coupon_uuid
-            );
-          } else if (
-            couponData.master_coupon_type === "Fixed product discount"
-          ) {
-            return applyFixedProductDiscount(
-              "fix product",
-              couponData.master_coupon_name,
-              couponData.master_coupon_amount,
-              couponData.master_coupon_products,
-              couponData.master_coupon_uuid
-            );
-          } else if (couponData.master_coupon_type === "Discount By User") {
-            return applyDiscountByUser("user", couponData.master_coupon_amount);
-          }
-        }
-      } else {
-        return "Coupon is not valid within the date range.";
+  Orders.reverse();
+  res.status(201).json({
+    success: true,
+    // totalAmount,
+    Orders,
+    // productFrequency,
+  });
+});
+
+// Update order status ----------- admin
+
+exports.updateOrder = catchAsyncError(async (req, res, next) => {
+  const Order = await order.findById(req.params.id);
+
+  const { paymentInfo, orderItem } = Order;
+
+  const {
+    status,
+    name,
+    address,
+    pinCode,
+    city,
+    country,
+    state,
+    email,
+    phoneNo,
+    link,
+  } = req.body;
+
+  const data = {
+    orderStatus: status,
+    shippingInfo: {
+      fullName: name,
+      phoneNo,
+      email,
+      address,
+      country,
+      state,
+      city,
+      pinCode,
+    },
+  };
+
+  if (!Order) {
+    return next(new ErrorHandler("Order not found", 404));
+  }
+
+  Order.orderStatus = data.orderStatus;
+  Order.shippingInfo = data.shippingInfo;
+
+  if (Order.orderStatus === "Delivered") {
+    //  return next(new ErrorHandler("We have already delivered this order", 404));
+    Order.deliveredAt = Date.now();
+  }
+
+  if (Order.orderStatus === "Shipped") {
+    const errors = [];
+    for (const o of Order.orderItem) {
+      try {
+        await updateStatus(o.productId, o.quantity, link);
+        const orderS = {
+          status: Order.orderStatus,
+          paymentInfo,
+          orderItem,
+          text: "Your order is currently being processed and will be shipped soon. You will receive a tracking number once it's shipped.",
+        };
+        sendOrderStatusEmail(orderS);
+      } catch (error) {
+        errors.push(error.message);
       }
-    } else {
-      return "Invalid coupon.";
+    }
+    if (errors.length > 0) {
+      return next(new ErrorHandler(errors.join("\n"), 400));
+    }
+  }
+  if (Order.orderStatus === "Return" || Order.orderStatus === "Cancle") {
+    const errors = [];
+    for (const o of Order.orderItem) {
+      try {
+        await updateStock(o.productId, o.quantity, Order.orderStatus, link);
+        if (Order.orderStatus === "Return") {
+          const orderS = {
+            status: Order.orderStatus,
+            paymentInfo,
+            orderItem,
+            text: "Once we receive the returned item, our team will inspect it. You will receive a confirmation email regarding the completion of the return process.",
+          };
+          sendOrderStatusEmail(orderS);
+        }
+      } catch (error) {
+        errors.push(error.message);
+      }
+    }
+    if (errors.length > 0) {
+      return next(new ErrorHandler(errors.join("\n"), 400));
     }
   }
 
-  async function isValidCoupon(coupon) {
-    const isExist = await MasrterCouponModel.findOne({
-      master_coupon_code: coupon,
-    });
-    return isExist;
-  }
+  // if (req.body.status === "Delivered") {
+  //   Order.deliveredAt = Date.now();
+  // }
 
-  async function isWithinDateRange(date, coupon) {
-    const isExist = await MasrterCouponModel.findOne({
-      master_coupon_code: coupon,
-    });
-
-    const start = isExist.master_coupon_start_date;
-    const end = isExist.master_coupon_end_date;
-
-    if (start < date && date < end) {
-      return isExist;
-    } else {
-      return "Coupon has benn expire.";
-    }
-  }
-
-  async function isBelowUsageLimit(limit, couponLength) {
-    if (couponLength < limit) {
-      return true;
-    } else {
-      return "This coupon expire";
-    }
-  }
-
-  async function applyCartPercentageDiscount(type, name, discountAmount, uuid) {
-    coupondata = {
-      type: type,
-      name: name,
-      disscount: discountAmount,
-      uuid,
-      productid: null,
-      message: "Coupon applied successfully!",
-    };
-    return coupondata;
-  }
-
-  async function applyCartFixedBasketDiscount(
-    type,
-    name,
-    discountAmount,
-    uuid
-  ) {
-    coupondata = {
-      type: type,
-      name: name,
-      uuid,
-      disscount: discountAmount,
-      productid: null,
-      message: "Coupon applied successfully!",
-    };
-    return coupondata;
-  }
-
-  async function applyFixedProductDiscount(
-    type,
-    name,
-    discountAmount,
-    numbersArray,
-    uuid
-  ) {
-    coupondata = {
-      type: type,
-      name: name,
-      disscount: discountAmount,
-      uuid,
-      productid: numbersArray ? numbersArray : null,
-      message: "Coupon applied successfully!",
-    };
-    return coupondata;
-  }
-  async function applyDiscountByUser(type, discountAmount) {
-    coupondata = {
-      type: type,
-      // name: discountAmount,
-      disscount: discountAmount,
-      productid: null,
-      message: "Coupon applied successfully!",
-    };
-    return coupondata;
-  }
+  await Order.save({ validateBeforeSave: false });
   res.status(200).json({
     success: true,
-    coupon: data,
+    Order,
   });
 });
 
-// exports.deleteBlogCategore = catchAsyncError(async (req, res, next) => {
-//
-//     const { id } = req.params;
+async function updateStatus(id, quantity, productId) {
+  try {
+    for (let i = 0; i < id.length; i++) {
+      const prodId = id[i];
+      const quant = quantity[i];
+      const Product = await product.findOne({ "seo.metalink": prodId });
 
-//     if (!mongoose.Types.ObjectId.isValid(id)) {
-//       return next(new ErrorHandler("Invalid ID format", 400));
-//     }
+      if (!Product) {
+        throw new Error(`Product not found for ID: ${prodId}`);
+      }
 
-//     const existingPost = await MasrterCoupon.findById(id);
+      Product.stock -= quant;
+      await Product.save({ validateBeforeSave: false });
+    }
+  } catch (err) {
+    throw new Error(`Internal server error: ${err}`);
+  }
+}
 
-//     if (!existingPost) {
-//       return next(new ErrorHandler("Post not found", 404));
-//     }
+async function updateStock(id, quantity, status, productId) {
+  try {
+    for (let i = 0; i < id.length; i++) {
+      const prodId = id[i];
+      const quant = quantity[i];
 
-//     await existingPost.deleteOne();
-//     res.status(200).json({
-//       success: true,
-//       message: "post has been deleted",
-//     });
-//   } catch (err) {
-//     return next(new ErrorHandler(`Internal server error: ${err}`, 500));
-//   }
-// });
+      const Product = await product.findOne({ "seo.metalink": prodId });
+      if (!Product) {
+        throw new Error(`Product not found for ID: ${prodId}`);
+      }
+      Product.stock += quant;
+      await Product.save({ validateBeforeSave: false });
+    }
+  } catch (err) {
+    throw new Error(`Internal server error: ${err}`);
+  }
+}
 
-// exports.updateBlogCategore = catchAsyncError(async (req, res, next) => {
-//
-//     const { name, slug, title, description } = req.body;
-//     let metaLink = slug.split(" ").join("-").toLowerCase();
-//     const user = req.user._id;
-//     const { id } = req.params;
+// Delete order   ----------- admin
 
-//     const data = {
-//       name,
-//       slug: metaLink,
-//       title,
-//       description,
-//       user,
-//     };
+exports.deleteOrders = catchAsyncError(async (req, res, next) => {
+  const Order = await order.findById(req.params.id);
+  if (!Order) {
+    return next(new ErrorHandler("Order not found", 404));
+  }
 
-//     if (!mongoose.Types.ObjectId.isValid(id)) {
-//       return next(new ErrorHandler("Invalid ID format", 400));
-//     }
+  await Order.deleteOne();
+  res.status(201).json({
+    success: true,
+    message: "order-delete",
+  });
+});
 
-//     const updatedCategory = await MasrterCoupon.findByIdAndUpdate(id, data, {
-//       new: true,
-//       runValidators: true,
-//       useFindAndModify: false,
-//     });
+//---------------------- shipping address
 
-//     res.status(200).json({
-//       success: true,
-//       updatedCategory,
-//     });
-//   } catch (err) {
-//     return next(new ErrorHandler(`Internal server error: ${err}`, 500));
-//   }
-// });
+exports.shipping_info = catchAsyncError(async (req, res, next) => {
+  const { id } = req.params;
+  const shipping = await orderShippingInfoModel.findOne({
+    order_info_uuid: id,
+  });
+  res.status(201).json({
+    success: true,
+    shipping,
+  });
+});
+
+exports.order_details_info = catchAsyncError(async (req, res, next) => {
+  const { id } = req.params;
+  const order_details = await orderDetailsMode.findOne({
+    order_info_uuid: id,
+  }).populate({path:'product_id',model:'Product'})
+  res.status(200).json({
+    success: true,
+    order_details,
+  });
+});

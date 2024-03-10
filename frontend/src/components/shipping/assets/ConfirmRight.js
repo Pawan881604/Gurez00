@@ -6,23 +6,27 @@ import Currency from "../../layout/currency/Currency";
 import { useSelector, useDispatch } from "react-redux";
 import { verifyMasterCoupon } from "../../../actions/MasterCouponAction";
 import { v4 as uu } from "uuid";
+import {
+  ALL_MASTER_COUPON_CLEAR,
+  VERIFY_MASTER_COUPON_RESET,
+} from "../../../constants/MasterCouponConstant";
 export const ConfirmRight = ({ cartItem, shippingInfo }) => {
   // const [coupon, setCoupon] = useState("");
   const uuid = uu().slice(0, 12);
 
   const dispatch = useDispatch();
   const [discountedprice, setDiscountedprice] = useState("");
-  const [isDiscount, setisDiscount] = useState(false);
+  const [msgVisiable,setVisiable] = useState(null);
   const [CouponinputValue, setCouponinputValue] = useState("");
   const [shoeMsg, setShoeMsg] = useState("");
 
-  console.log(discountedprice);
   const {
     loading,
     coupon_data,
+    success,
     error: couponError,
   } = useSelector((state) => state.mastercoupon);
-  console.log(coupon_data);
+
   const ids = cartItem && cartItem.map((item) => item.productId);
 
   const Navigate = useNavigate();
@@ -41,7 +45,7 @@ export const ConfirmRight = ({ cartItem, shippingInfo }) => {
   const removeCoupon = () => {
     setDiscountedprice(totalPrice);
     setCouponinputValue("");
-    setisDiscount(false)
+    dispatch({ type: VERIFY_MASTER_COUPON_RESET });
   };
 
   const inputData = () => {
@@ -59,9 +63,7 @@ export const ConfirmRight = ({ cartItem, shippingInfo }) => {
       subtotal,
       shippingChargs,
       tax,
-      totalPrice: discountedprice
-        ? Math.abs(discountedprice - totalPrice)
-        : Math.abs(totalPrice),
+      totalPrice: discountedprice,
       coupon: coupon_data && coupon_data.name,
       coupon_uuid: coupon_data && coupon_data.uuid,
       discountamount:
@@ -73,18 +75,17 @@ export const ConfirmRight = ({ cartItem, shippingInfo }) => {
       uuid,
       totalQuantity,
     };
-
+    console.log(data);
     sessionStorage.setItem("orderInfo", JSON.stringify(data));
     Navigate("/shipping/proccess/payment");
   };
 
   useEffect(() => {
     if (couponError) {
+      setVisiable(false)
       setShoeMsg(couponError);
-      
     }
     if (coupon_data) {
-      setisDiscount(true)
       if (coupon_data.type === "percentage") {
         const data = (totalPrice * coupon_data.disscount) / 100;
         setDiscountedprice(data);
@@ -95,8 +96,11 @@ export const ConfirmRight = ({ cartItem, shippingInfo }) => {
         setDiscountedprice(totalPrice);
       }
     }
-  }, [coupon_data, totalPrice, couponError]);
-
+    if (success) {
+      setVisiable(true)
+    }
+  }, [coupon_data, success, totalPrice, couponError]);
+console.log(msgVisiable)
   return (
     <>
       <div className="conf-prod-det">
@@ -106,14 +110,16 @@ export const ConfirmRight = ({ cartItem, shippingInfo }) => {
             setCouponinputValue={setCouponinputValue}
             CouponinputValue={CouponinputValue}
           />
-          {isDiscount && !couponError ? (
-            <p style={{ color: "green", fontWeight: 600 }}>
-              {coupon_data && coupon_data.message}
-            </p>
-          ) : (
-            <p style={{ color: "red", fontWeight: 600 }}>{shoeMsg}</p>
-          )}
         </div>
+
+        {msgVisiable ? (
+          <p style={{ color: "green", fontWeight: 600 }}>
+            {coupon_data.message}
+          </p>
+        ) :!msgVisiable ? (
+          <p style={{ color: "red", fontWeight: 600 }}>{shoeMsg}</p>
+        ) : null}
+
         {cartItem &&
           cartItem.map((item, i) => (
             <div className="conf-prod-area" key={i}>
@@ -139,24 +145,24 @@ export const ConfirmRight = ({ cartItem, shippingInfo }) => {
                 <Currency price={subtotal} />{" "}
               </span>
             </p>
-            {coupon_data && coupon_data ? (
-              <>
-                <p>
-                  <span>
-                    coupon:
-                    <span>{coupon_data && coupon_data.name}</span>
-                  </span>
 
-                  <span>
-                    RS -
-                    {discountedprice ? (
-                      <Currency price={totalPrice - discountedprice} />
-                    ) : null}
-                    <span onClick={removeCoupon}>Remove</span>
-                  </span>
-                </p>
-              </>
-            ) : null}
+            <>
+              <p>
+                <span>
+                  coupon:
+                  <span>{coupon_data && coupon_data.name}</span>
+                </span>
+
+                <span>
+                  RS -
+                  {discountedprice ? (
+                    <Currency price={totalPrice - discountedprice} />
+                  ) : null}
+                  <span onClick={removeCoupon}>Remove</span>
+                </span>
+              </p>
+            </>
+
             <p>
               <span>Shipping Charges:</span>
               <span>
@@ -175,9 +181,7 @@ export const ConfirmRight = ({ cartItem, shippingInfo }) => {
                 <b>Total:</b>
               </span>
               <span>
-                <Currency
-                  price={!couponError ? Math.abs(discountedprice) : totalPrice}
-                />
+                <Currency price={discountedprice} />
               </span>
             </p>
           </div>

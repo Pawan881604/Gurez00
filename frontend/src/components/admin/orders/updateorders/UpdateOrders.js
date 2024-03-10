@@ -19,13 +19,16 @@ import {
 } from "../../../../actions/Paymentaction";
 import MetaData from "../../../layout/metaData/MetaData";
 import OrderAttribution from "./sidebar/OrderAttribution";
+import OrderSideBar from "./sidebar/OrderSideBar";
 
 export const UpdateOrders = () => {
   const dispatch = useDispatch();
   const alert = useAlert();
   const { id } = useParams();
   const Navigate = useNavigate();
-  const { loading, orders, error } = useSelector((state) => state.orderDetails);
+  const { loading, orders, shiping_info, error } = useSelector(
+    (state) => state.orderDetails
+  );
   const {
     loading: update_loading,
     isUpdate,
@@ -56,7 +59,7 @@ export const UpdateOrders = () => {
     const { name, value } = e.target;
     setInputValue({ ...inputValue, [name]: value });
   };
-
+  console.log(inputValue);
   const orderStatusSubmitHandle = (e) => {
     const {
       status,
@@ -82,7 +85,8 @@ export const UpdateOrders = () => {
         state,
         email,
         phoneNo,
-        orders && orders.orderItem && orders.orderItem[0].link
+        orders && orders.orderItem && orders.orderItem[0].link,
+        orders.order_info_uuid
       )
     );
   };
@@ -91,36 +95,23 @@ export const UpdateOrders = () => {
     dispatch(getOrderDetails(id));
   }, []);
 
-  console.log(orders);
   useEffect(() => {
     if (error) {
       alert.error(error);
       dispatch(clearErrors());
     }
     if (orders) {
-      setInputValue({
-        name: orders && orders.shippingInfo && orders.shippingInfo.fullName,
-        address: orders && orders.shippingInfo && orders.shippingInfo.address,
-        city: orders && orders.shippingInfo && orders.shippingInfo.city,
-        pinCode: orders && orders.shippingInfo && orders.shippingInfo.pinCode,
-        state: orders && orders.shippingInfo && orders.shippingInfo.state,
-        country: orders && orders.shippingInfo && orders.shippingInfo.country,
-        email: orders && orders.shippingInfo && orders.shippingInfo.email,
-        phoneNo: orders && orders.shippingInfo && orders.shippingInfo.phoneNo,
-        status: orders && orders.order_info_status,
-      });
       dispatch(get_payment_info(orders && orders.order_info_uuid));
       dispatch(order_shipping_info(orders && orders.order_info_uuid));
       dispatch(order_details_info(orders && orders.order_info_uuid));
-    
     }
   }, [
     dispatch,
     error,
     alert,
     id,
-
     ,
+    // shiping_info
     isUpdate,
     cartShippingInfo,
     orders,
@@ -146,17 +137,17 @@ export const UpdateOrders = () => {
                     <div className="order-flex-left">
                       <div className="order-d-page">
                         <h1>Order's</h1>
-                     
                       </div>
                       <UpdateOrderForm
                         orders={orders}
                         inputValue={inputValue}
                         inputChangeEventHandle={inputChangeEventHandle}
                         orderStatusSubmitHandle={orderStatusSubmitHandle}
+                        setInputValue={setInputValue}
                       />
                     </div>
                     <div className="order-flex-right">
-                      <OrderAttribution />
+                      <OrderSideBar />
                     </div>
                   </div>
                 </div>

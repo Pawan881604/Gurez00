@@ -158,6 +158,17 @@ const OrderProductList = () => {
             </div>
             <div className="row">
               <div className="col-md-6">
+                <p className="xsm-font-size">GST:</p>
+              </div>
+              <div className="col-md-6">
+                <p className="xsm-font-size">
+                  {" "}
+                  <Currency price={orders && orders.order_info_gst} />
+                </p>
+              </div>
+            </div>
+            <div className="row">
+              <div className="col-md-6">
                 <p className="xsm-font-size">Order Total:</p>
               </div>
               <div className="col-md-6">
@@ -166,7 +177,8 @@ const OrderProductList = () => {
                     price={Math.abs(
                       (order_details_info &&
                         order_details_info.order_info_detail_price) +
-                        (orders && orders.order_info_shipping_charges) -
+                        (orders && orders.order_info_shipping_charges) +
+                        (orders && orders.order_info_gst) -
                         (orders && orders.order_info_total_coupon_discount)
                     )}
                   />
@@ -187,7 +199,8 @@ const OrderProductList = () => {
                     price={Math.abs(
                       (order_details_info &&
                         order_details_info.order_info_detail_price) +
-                        (orders && orders.order_info_shipping_charges) -
+                        (orders && orders.order_info_shipping_charges) +
+                        (orders && orders.order_info_gst)-
                         (orders && orders.order_info_total_coupon_discount)
                     )}
                   />

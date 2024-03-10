@@ -16,11 +16,38 @@ const UpdateOrderForm = ({
   inputValue,
   inputChangeEventHandle,
   orderStatusSubmitHandle,
+  setInputValue,
 }) => {
+  const { loading, shiping_info, error } = useSelector(
+    (state) => state.orderDetails
+  );
   const [editToggle, setEditToggel] = useState(false);
   const [editToggle2, setEditToggel2] = useState(false);
-  const statusArr = ["Proccessing", "Shipped", "Delivered", "Return", "Cancle",'Failed'];
-console.log(inputValue)
+  const statusArr = [
+    "Proccessing",
+    "Shipped",
+    "Delivered",
+    "Return",
+    "Cancle",
+    "Failed",
+  ];
+
+  useEffect(() => {
+    if (shiping_info) {
+      setInputValue({
+        status: orders && orders.order_info_status,
+        name: shiping_info && shiping_info.fullName,
+        address: shiping_info && shiping_info.address,
+        city: shiping_info && shiping_info.city,
+        pinCode: shiping_info && shiping_info.pinCode,
+        state: shiping_info && shiping_info.state,
+        country: shiping_info && shiping_info.country,
+        email: shiping_info && shiping_info.email,
+        phoneNo: shiping_info && shiping_info.phoneNo,
+      });
+    }
+  }, [shiping_info]);
+
   return (
     <>
       <div className="order-form-area form" onSubmit={orderStatusSubmitHandle}>
@@ -77,34 +104,13 @@ console.log(inputValue)
                   : "form-input-area-text"
               }
             >
-              <p className="xsm-font-size">
-             
-                {inputValue.name}
-              </p>
-              <p className="xsm-font-size">
-               
-                {inputValue.address}
-              </p>
-              <p className="xsm-font-size">
-             
-                {inputValue.pinCode}
-              </p>
-              <p className="xsm-font-size">
-              
-                {inputValue.state}
-              </p>
-              <p className="xsm-font-size">
-              
-                {inputValue.country}
-              </p>
-              <p className="xsm-font-size">
-               
-                {inputValue.phoneNo}
-              </p>
-              <p className="xsm-font-size">
-              
-                {inputValue.email}
-              </p>
+              <p className="xsm-font-size">{inputValue.name}</p>
+              <p className="xsm-font-size">{inputValue.address}</p>
+              <p className="xsm-font-size">{inputValue.pinCode}</p>
+              <p className="xsm-font-size">{inputValue.state}</p>
+              <p className="xsm-font-size">{inputValue.country}</p>
+              <p className="xsm-font-size">{inputValue.phoneNo}</p>
+              <p className="xsm-font-size">{inputValue.email}</p>
             </div>
             <div
               className={
@@ -417,7 +423,9 @@ console.log(inputValue)
           </div>
         </div>
 
-        <Button type="submit">Update</Button>
+        <Button type="submit" onClick={(e) => orderStatusSubmitHandle(e)}>
+          Update
+        </Button>
       </div>
       <OrderProductList orders={orders.orderItem} />
     </>

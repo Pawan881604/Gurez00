@@ -1,3 +1,5 @@
+
+
 .product-cont {
   max-width: 1200px;
   margin: 0 auto;
@@ -144,8 +146,9 @@ del {
 .stock-cont {
   display: flex;
   width: 203px;
-  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+ 
 }
+
 .product-sticky-content {
   width: 60%;
 }
@@ -169,11 +172,25 @@ del {
 .addtocart-button .cart-svg {
   font-size: 20px;
 }
+
 .stock-cont input {
-  width: 39px;
+  width: 40px;
   text-align: right;
   border: none;
   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+}
+.stock-cont button {
+  padding: 0px;
+ width: 100%;
+}
+.stock-cont .MuiButton-root{
+  width: 100%;
+  padding:15px 0px;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+}
+.stock-cont .MuiDialogActions-root {
+  min-width:40px;
+  padding: 0;
 }
 .prod-wish button {
   background: #222;
@@ -297,6 +314,13 @@ del {
   .product-main {
     flex-direction: column;
   }
+  .product-details{
+    padding: 15px 0;
+  }
+  .stock-cont .MuiButton-root{
+    width: 100%;
+    min-width: 45px ;
+  }
   .product-main-left,
   .product-main-right {
     width: 100%;
@@ -354,16 +378,10 @@ del {
   .stock-cont input {
     text-align: center;
   }
-  .product-sticky-content {
-    margin-left: 0;
-    margin-top: 10px;
-  }
-  .prod-wish {
-    padding: 8px;
-    position: absolute;
-    right: 32px;
-    top: -9px;
-  }
+.product-sticky-content .MuiDialogActions-root{
+  padding: 0;
+}
+
   .avg-rating-container {
     flex-direction: column;
     align-items: flex-start;

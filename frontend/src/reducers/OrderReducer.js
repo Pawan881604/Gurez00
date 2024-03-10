@@ -123,7 +123,9 @@ export const orderDetailsReducer = (
       return {
         ...state,
         loading: false,
-        orders: action.payload, // Update orders
+        orders: action.payload.Order, // Update orders
+        Total_orders: action.payload.Total_orders, // Update orders
+        Total_revenue: action.payload.Total_revenue, // Update orders
       };
 
     case ORDER_DETAILS_FAIL:

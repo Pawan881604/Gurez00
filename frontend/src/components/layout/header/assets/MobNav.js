@@ -16,7 +16,7 @@ export const MobNav = ({ isContentVisible, toggleContentRemove }) => {
             <FaXmark onClick={toggleContentRemove} />
           </div>
           <Search />
-          <NavList toggleContentRemove={toggleContentRemove} />
+          <NavList  toggleContentRemove={toggleContentRemove} />
         </div>
       </div>
     </>

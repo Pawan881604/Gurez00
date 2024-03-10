@@ -89,12 +89,17 @@ font-size: 18px;
   width: 45%;
 }
 
-#news-email{
-  width: 350px;
-  
+.footer-newaletter-form input{
+  width: 100%;
 }
 @media only screen and (max-width: 767px) {
   .foot-col {
+    flex-direction: column;
+  }
+  .footer-newsletter{
+    width: 100%;
+  }
+  .footer-newaletter-form{
     flex-direction: column;
   }
   .foot{

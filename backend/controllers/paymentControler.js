@@ -86,7 +86,7 @@ exports.payentDataApi = catchAsyncError(async (req, res, next) => {
 
   const { taxPrice, totalPrice, uuid, coupon_uuid } = order_info;
 
-  // console.log(req.body);
+ 
   const { data } = await axios.get(
     `https://api.razorpay.com/v1/payments/${paymentid}`,
     {
@@ -128,8 +128,8 @@ exports.payment_details_info = catchAsyncError(async (req, res, next) => {
   const payment_info = await OrdersPaymentsInfoModel.findOne({
     order_info_uuid: id,
   });
-console.log(id)
-console.log(payment_info)
+
+
   res.status(200).json({
     success: true,
     payment_info,

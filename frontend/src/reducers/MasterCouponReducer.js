@@ -63,12 +63,11 @@ export const massterCouponReducer = (
 
     case VERIFY_MASTER_COUPON_RESET:
       return {
-        ...state,
+
         ...state,
         loading: false,
         coupon_data: null,
         success: null,
-        error: null,
       };
 
     default:

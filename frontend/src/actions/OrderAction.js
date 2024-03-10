@@ -28,30 +28,30 @@ import {
 
 import axios from "axios";
 
-export const createOrder = (order,payment_mode) => async (dispatch, getState) => {
-  try {
-    dispatch({ type: CREATE_ORDER_REQUEST });
-    const order_details = JSON.stringify(order);
-    const formData = new FormData();
-    formData.append("order_details", order_details);
-    formData.append("payment_mode", payment_mode);
+export const createOrder =
+  (order, payment_mode) => async (dispatch, getState) => {
+    try {
+      dispatch({ type: CREATE_ORDER_REQUEST });
+      const order_details = JSON.stringify(order);
+      const formData = new FormData();
+      formData.append("order_details", order_details);
+      formData.append("payment_mode", payment_mode);
 
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+      const data = await axios.post("/api/v1/order/new", formData, config);
 
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-    const data = await axios.post("/api/v1/order/new",formData, config);
-
-    dispatch({ type: CREATE_ORDER_SUCCESS, payload: data.data.Order });
-  } catch (err) {
-    dispatch({
-      type: CREATE_ORDER_FAIL,
-      payload: err.response.data.message,
-    });
-  }
-};
+      dispatch({ type: CREATE_ORDER_SUCCESS, payload: data.data.Order });
+    } catch (err) {
+      dispatch({
+        type: CREATE_ORDER_FAIL,
+        payload: err.response.data.message,
+      });
+    }
+  };
 
 export const getMyorders = () => async (dispatch) => {
   try {
@@ -77,7 +77,7 @@ export const getOrderDetails = (id) => async (dispatch) => {
 
     dispatch({
       type: ORDER_DETAILS_SUCCESS,
-      payload: data.Order,
+      payload: data,
     });
   } catch (err) {
     dispatch({
@@ -118,9 +118,22 @@ export const updateOrder =
     state,
     email,
     phoneNo,
-    productId
+    productId,order_info_uuid,
   ) =>
   async (dispatch) => {
+    console.log(
+      id,
+      status,
+      name,
+      address,
+      city,
+      pinCode,
+      country,
+      state,
+      email,
+      phoneNo,
+      productId
+    );
     try {
       dispatch({ type: UPDATE_ORDER_REQUEST });
       const formData = new FormData();
@@ -134,6 +147,7 @@ export const updateOrder =
       formData.append("email", email);
       formData.append("phoneNo", phoneNo);
       formData.append("link", productId);
+      formData.append("order_info_uuid", order_info_uuid);
 
       const config = {
         headers: {
@@ -145,6 +159,7 @@ export const updateOrder =
         formData,
         config
       );
+      // const data = "d";
 
       dispatch({ type: UPDATE_ORDER_SUCCESS, payload: data.success });
     } catch (err) {
@@ -168,13 +183,11 @@ export const deleteOrder = (id) => async (dispatch) => {
   }
 };
 
-
 export const order_shipping_info = (id) => async (dispatch) => {
   try {
-    
     dispatch({ type: ORDER_SHIPPING_INFO_REQUEST });
     const { data } = await axios.get(`/api/v1/order/shipping-info/${id}`);
-  
+
     dispatch({ type: ORDER_SHIPPING_INFO_SUCCESS, payload: data.shipping });
   } catch (err) {
     dispatch({

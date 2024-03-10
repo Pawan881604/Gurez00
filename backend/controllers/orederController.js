@@ -24,7 +24,8 @@ exports.createOrder = catchAsyncError(async (req, res, next) => {
     shippingPrice,
     totalPrice,
     uuid,
-    coupon_uuid,coupon_code,
+    coupon_uuid,
+    coupon_code,
     coupon_discounttype,
     coupon_discount,
     totalQuantity,
@@ -45,7 +46,7 @@ exports.createOrder = catchAsyncError(async (req, res, next) => {
     order_info_grand_total: itemPrice + taxPrice + shippingPrice,
     user: req.user._id,
     order_info_status: payment_mode === "COD" ? "Proccessing" : "Failed",
-    order_info_mode: payment_mode ,
+    order_info_mode: payment_mode,
   });
   const shippingStatus = await orderShippingInfoModel.create({
     shipping_uuid: shippinginfo.shipping_uuid,
@@ -79,13 +80,13 @@ exports.createOrder = catchAsyncError(async (req, res, next) => {
       product_Total_Price += item.price * item.quantity;
       product_Total_Quantity += item.quantity;
     });
-  
+
   const order_Details_length = await orderDetailsMode.countDocuments();
   const orderDetails = await orderDetailsMode.create({
     order_detail_id: order_Details_length + 1,
     order_info_uuid: uuid,
-    product_Items:orderItem,
-    product_id:product_id,
+    product_Items: orderItem,
+    product_id: product_id,
     product_uuid: product_uuid,
     order_info_detail_price: product_Total_Price,
     order_detail_quantity: product_Total_Quantity,
@@ -104,6 +105,14 @@ exports.getSingleOrder = catchAsyncError(async (req, res, next) => {
     { path: "user", model: "User" },
     // {path:'master_coupon_uuid',model:'masterCoupon'}
   ]);
+  const user = Order.user._id;
+  const all_order = await order.find();
+
+  const all_user_orders = all_order.filter((item) => item.user === user);
+  const Total_orders = all_user_orders.length;
+  const Total_revenue = all_user_orders.reduce((acc, order) => {
+    return acc + order.order_info_total_price;
+  }, 0);
 
   if (!Order) {
     return next(new ErrorHandler("order not found with this is", 404));
@@ -111,6 +120,8 @@ exports.getSingleOrder = catchAsyncError(async (req, res, next) => {
   res.status(201).json({
     success: true,
     Order,
+    Total_orders,
+    Total_revenue,
   });
 });
 
@@ -154,10 +165,6 @@ exports.getAllOrders = catchAsyncError(async (req, res, next) => {
 // Update order status ----------- admin
 
 exports.updateOrder = catchAsyncError(async (req, res, next) => {
-  const Order = await order.findById(req.params.id);
-
-  const { paymentInfo, orderItem } = Order;
-
   const {
     status,
     name,
@@ -169,124 +176,134 @@ exports.updateOrder = catchAsyncError(async (req, res, next) => {
     email,
     phoneNo,
     link,
+    order_info_uuid,
   } = req.body;
 
-  const data = {
-    orderStatus: status,
-    shippingInfo: {
-      fullName: name,
-      phoneNo,
-      email,
-      address,
-      country,
-      state,
-      city,
-      pinCode,
-    },
-  };
+  const Order = await order.findById(req.params.id);
+  const payment_info = await OrdersPaymentsInfoModel.findOne({
+    order_info_uuid: Order.order_info_uuid,
+  });
 
   if (!Order) {
     return next(new ErrorHandler("Order not found", 404));
   }
-
-  Order.orderStatus = data.orderStatus;
-  Order.shippingInfo = data.shippingInfo;
-
-  if (Order.orderStatus === "Delivered") {
-    //  return next(new ErrorHandler("We have already delivered this order", 404));
-    Order.deliveredAt = Date.now();
-  }
-
-  if (Order.orderStatus === "Shipped") {
-    const errors = [];
-    for (const o of Order.orderItem) {
-      try {
-        await updateStatus(o.productId, o.quantity, link);
-        const orderS = {
-          status: Order.orderStatus,
-          paymentInfo,
-          orderItem,
-          text: "Your order is currently being processed and will be shipped soon. You will receive a tracking number once it's shipped.",
-        };
-        sendOrderStatusEmail(orderS);
-      } catch (error) {
-        errors.push(error.message);
-      }
-    }
-    if (errors.length > 0) {
-      return next(new ErrorHandler(errors.join("\n"), 400));
-    }
-  }
-  if (Order.orderStatus === "Return" || Order.orderStatus === "Cancle") {
-    const errors = [];
-    for (const o of Order.orderItem) {
-      try {
-        await updateStock(o.productId, o.quantity, Order.orderStatus, link);
-        if (Order.orderStatus === "Return") {
-          const orderS = {
-            status: Order.orderStatus,
-            paymentInfo,
-            orderItem,
-            text: "Once we receive the returned item, our team will inspect it. You will receive a confirmation email regarding the completion of the return process.",
-          };
-          sendOrderStatusEmail(orderS);
-        }
-      } catch (error) {
-        errors.push(error.message);
-      }
-    }
-    if (errors.length > 0) {
-      return next(new ErrorHandler(errors.join("\n"), 400));
-    }
-  }
-
-  // if (req.body.status === "Delivered") {
-  //   Order.deliveredAt = Date.now();
+  console.log(req);
+  // if (Order.order_info_status === "Delivered") {
+  //   return next(new ErrorHandler("We have already Delivered this order", 404));
+  //   // Order.deliveredAt = Date.now();
   // }
 
+  if (payment_info) {
+    payment_info.payment_info_status = status;
+    await payment_info.save({ validateBeforeSave: false });
+  }
+
+  Order.order_info_status = status;
+  const shiiping_data = {
+    fullName: name,
+    phoneNo: phoneNo,
+    email: email,
+    address: address,
+    country: country,
+    state: state,
+    city: city,
+    pinCode: pinCode,
+  };
+  const shipping_info = await orderShippingInfoModel.findOneAndUpdate(
+    { order_info_uuid: Order.order_info_uuid },
+    shiiping_data,
+    { new: true, runValidators: true, useFindAndModify: false }
+  );
+
+  if (Order.order_info_status === "Shipped") {
+    const orderS = {
+      status: Order.order_info_status,
+
+      text: "Your order is currently being processed and will be shipped soon. You will receive a tracking number once it's shipped.",
+    };
+    sendOrderStatusEmail(orderS);
+  }
+  if (Order.order_info_status === "Return") {
+    const orderS = {
+      status: Order.order_info_status,
+
+      text: "Your order is currently being processed and will be shipped soon. You will receive a tracking number once it's shipped.",
+    };
+    sendOrderStatusEmail(orderS);
+  }
+  if (Order.order_info_status === "Cancle") {
+    const orderS = {
+      status: Order.order_info_status,
+
+      text: "Your order is currently being processed and will be shipped soon. You will receive a tracking number once it's shipped.",
+    };
+    sendOrderStatusEmail(orderS);
+  }
+
+  if (Order.order_info_status === "Cancle") {
+    const orderS = {
+      status: Order.order_info_status,
+
+      text: "Your order is currently being processed and will be shipped soon. You will receive a tracking number once it's shipped.",
+    };
+    sendOrderStatusEmail(orderS);
+  }
+
+  if (req.body.status === "Delivered") {
+    const orderS = {
+      status: Order.order_info_status,
+
+      text: "Your order is currently being processed and will be shipped soon. You will receive a tracking number once it's shipped.",
+    };
+    sendOrderStatusEmail(orderS);
+    Order.order_info_delivery_date = Date.now();
+  }
+
   await Order.save({ validateBeforeSave: false });
+  // await shipping_info.save({ validateBeforeSave: false });
+
   res.status(200).json({
     success: true,
-    Order,
+    // Order,
   });
 });
 
-async function updateStatus(id, quantity, productId) {
-  try {
-    for (let i = 0; i < id.length; i++) {
-      const prodId = id[i];
-      const quant = quantity[i];
-      const Product = await product.findOne({ "seo.metalink": prodId });
+// async function updateStatus(id, quantity, productId) {
+//   try {
+//     for (let i = 0; i < id.length; i++) {
+//       const prodId = id[i];
+//       const quant = quantity[i];
+//       const Product = await product.findOne({ "seo.metalink": prodId });
 
-      if (!Product) {
-        throw new Error(`Product not found for ID: ${prodId}`);
-      }
+//       if (!Product) {
+//         throw new Error(`Product not found for ID: ${prodId}`);
+//       }
 
-      Product.stock -= quant;
-      await Product.save({ validateBeforeSave: false });
-    }
-  } catch (err) {
-    throw new Error(`Internal server error: ${err}`);
-  }
-}
+//       Product.stock -= quant;
+//       await Product.save({ validateBeforeSave: false });
+//     }
+//   } catch (err) {
+//     throw new Error(`Internal server error: ${err}`);
+//   }
+// }
 
-async function updateStock(id, quantity, status, productId) {
-  try {
-    for (let i = 0; i < id.length; i++) {
-      const prodId = id[i];
-      const quant = quantity[i];
+// async function updateStock(id, quantity, status, productId) {
+//   try {
+//     for (let i = 0; i < id.length; i++) {
+//       const prodId = id[i];
+//       const quant = quantity[i];
 
-      const Product = await product.findOne({ "seo.metalink": prodId });
-      if (!Product) {
-        throw new Error(`Product not found for ID: ${prodId}`);
-      }
-      Product.stock += quant;
-      await Product.save({ validateBeforeSave: false });
-    }
-  } catch (err) {
-    throw new Error(`Internal server error: ${err}`);
-  }
-}
+//       const Product = await product.findOne({ "seo.metalink": prodId });
+//       if (!Product) {
+//         throw new Error(`Product not found for ID: ${prodId}`);
+//       }
+//       Product.stock += quant;
+//       await Product.save({ validateBeforeSave: false });
+//     }
+//   } catch (err) {
+//     throw new Error(`Internal server error: ${err}`);
+//   }
+// }
 
 // Delete order   ----------- admin
 
@@ -318,9 +335,11 @@ exports.shipping_info = catchAsyncError(async (req, res, next) => {
 
 exports.order_details_info = catchAsyncError(async (req, res, next) => {
   const { id } = req.params;
-  const order_details = await orderDetailsMode.findOne({
-    order_info_uuid: id,
-  }).populate({path:'product_id',model:'Product'})
+  const order_details = await orderDetailsMode
+    .findOne({
+      order_info_uuid: id,
+    })
+    .populate({ path: "product_id", model: "Product" });
   res.status(200).json({
     success: true,
     order_details,
