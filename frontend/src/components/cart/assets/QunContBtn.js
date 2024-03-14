@@ -21,12 +21,12 @@ const QunContBtn = ({ item }) => {
 
   return (
     <>
-      <div className="qun-cont">
-        <button onClick={() => decreaseQuantity(item.link, item.quantity,item.price)}>
+      <div className="row qun-cont">
+        <button style={{cursor:'pointer'}}  onClick={() => decreaseQuantity(item.link, item.quantity,item.price)}>
           <FaMinus />
         </button>
         <input readOnly type="number" value={item.quantity} />
-        <button
+        <button style={{cursor:'pointer'}}
           onClick={() =>
             increaseQuantity(item.link, item.quantity, item.price, item.stock)
           }

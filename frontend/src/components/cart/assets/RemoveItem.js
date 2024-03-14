@@ -12,13 +12,13 @@ const RemoveItem = ({ item }) => {
 
   return (
     <>
-      <div className="cart-item-remove">
-        <p
+      <div style={{marginBottom:'10px',opacity:'0.5'}} className="cart-item-remove">
+        <p style={{cursor:'pointer'}}
           onClick={() => {
             removeEventListener(item.productId);
           }}
         >
-          <FaXmark />
+          <FaXmark style={{fontSize:30}} />
         </p>
       </div>
     </>

@@ -18,7 +18,7 @@ function BottomNav() {
 
   const nav = [
     { link: "/", icon: <IoHomeOutline /> },
-    { link: "/account", icon: <FaRegUser /> },
+    { link: "/user-dashboard", icon: <FaRegUser /> },
     { link: "/order/me", icon: <BsLayers /> },
     { link: "/cart", icon: <BsCartDash /> },
   ];
@@ -43,7 +43,7 @@ function BottomNav() {
         break;
       case 1:
         setOpen(false);
-        navigate("/account");
+        navigate("/user-dashboard");
         break;
       case 3:
         setOpen(false);

@@ -11,14 +11,12 @@ const RemoveWishItem = ({ item }) => {
   };
   return (
     <>
-      <div className="wish-item-remove">
-        <p
+      <div style={{marginBottom:'10px',opacity:'0.5'}} className="wish-item-remove">
+        <FaXmark style={{fontSize:30}}
           onClick={() => {
             removeEventListener(item.productId);
           }}
-        >
-          <FaXmark />
-        </p>
+        />
       </div>
     </>
   );

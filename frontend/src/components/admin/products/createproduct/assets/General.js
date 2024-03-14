@@ -1,22 +1,17 @@
-import React from "react";
-
+import React, { useEffect, useState } from "react";
+import { useAlert } from "react-alert";
 const General = ({ setProduct_sale_price, setProduct_regular_price }) => {
-  // const generalPrice = (e, position, state) => {
-  //   const { value } = e.target;
-  //   const numericValue = parseInt(value);
+  const [error, setError] = useState(null);
+  const [max, setMax] = useState(0);
+  const [min, setMin] = useState(0);
 
-  //   // setGeneralPrice((prevPrices) => {
-  //   //   if (!prevPrices) {
-  //   //     prevPrices = [];
-  //   //   }
-  //   //   const updatedPrices = [...prevPrices] || [];
-  //   //   updatedPrices[position] = {
-  //   //     [position === 0 ? "regular_price" : "sale_price"]:
-  //   //       numericValue && numericValue,
-  //   //   };
-  //   //   return updatedPrices;
-  //   // });
-  // };
+  useEffect(() => {
+    if (max < min) {
+      setError("Sale price should be less then from Regular price");
+    } else {
+      setError(null);
+    }
+  }, [min, max, alert]);
 
   return (
     <>
@@ -28,6 +23,7 @@ const General = ({ setProduct_sale_price, setProduct_regular_price }) => {
           <input
             type="text"
             id="regularprice"
+            onChange={(e) => setMax(e.target.value)}
             onBlur={(e) => setProduct_regular_price(e.target.value)}
           />
         </div>
@@ -40,10 +36,12 @@ const General = ({ setProduct_sale_price, setProduct_regular_price }) => {
           <input
             type="text"
             id="saleprice"
+            onChange={(e) => setMin(e.target.value)}
             onBlur={(e) => setProduct_sale_price(e.target.value)}
           />
         </div>
       </div>
+      {error && <p className="danger-text xsm-font-size">{error}</p>}
     </>
   );
 };

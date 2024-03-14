@@ -225,6 +225,17 @@ header {
   background-color: #ffffff; /* You can change the background color when it becomes sticky */
 }
 
+
+/* //---------------admin */
+
+.quicklinks{
+  background-color: #000;
+}
+.quicklinks li,
+.quicklinks li a{
+  color: #fff;
+}
+
 @media only screen and (max-width: 1220px) {
   .h-left-col {
     width: 50%;

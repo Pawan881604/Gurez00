@@ -120,6 +120,7 @@ const LoginSingup = () => {
 
       <section className="registration-section">
         <div className="my-account-row">
+          <div className="my-account-main">
           <div className="my-account-box">
             <div className="form-toggel">
               <h2 onClick={(e) => switchTabs(e, "login")}>Login</h2>
@@ -140,7 +141,7 @@ const LoginSingup = () => {
                     <Loader />
                   ) : (
                     <>
-                      <div className="input-list">
+                      <div className="input-lists ">
                         <label htmlFor="email">Email</label>
                         <input
                           type="email"
@@ -151,7 +152,7 @@ const LoginSingup = () => {
                           onChange={inputHandle}
                         />
                       </div>
-                      <div className="input-list">
+                      <div className="input-lists">
                         <label htmlFor="password">Password</label>
                         <input
                           type="password"
@@ -162,13 +163,13 @@ const LoginSingup = () => {
                           onChange={inputHandle}
                         />
                       </div>
-                      <div className="input-list">
-                        <Button type="submit">Login</Button>
+                      <div className="input-lists">
+                        <Button type="submit" className="profile-btn">Login</Button>
                       </div>
                     </>
                   )}
                 </form>
-                <p>
+                <p className="forget-pass">
                   <NavLink to={"/forget-password"}>Forget password</NavLink>
                 </p>
               </div>
@@ -184,7 +185,7 @@ const LoginSingup = () => {
                     <Loader />
                   ) : (
                     <>
-                      <div className="input-list">
+                      <div className="input-lists">
                         <label htmlFor="name">Name</label>
                         <input
                           type="text"
@@ -195,7 +196,7 @@ const LoginSingup = () => {
                           onChange={SingupInputHandle}
                         />
                       </div>
-                      <div className="input-list">
+                      <div className="input-lists">
                         <label htmlFor="email">Email</label>
                         <input
                           type="email"
@@ -206,7 +207,7 @@ const LoginSingup = () => {
                           onChange={SingupInputHandle}
                         />
                       </div>
-                      <div className="input-list">
+                      <div className="input-lists">
                         <label htmlFor="password">Password</label>
                         <input
                           type="password"
@@ -217,7 +218,7 @@ const LoginSingup = () => {
                           onChange={SingupInputHandle}
                         />
                       </div>
-                      <div className="input-list">
+                      {/* <div className="input-lists">
                         <label htmlFor="cpassword">Password</label>
                         <input
                           type="password"
@@ -227,16 +228,17 @@ const LoginSingup = () => {
                           value={singupValue.cpassword}
                           onChange={SingupInputHandle}
                         />
-                      </div>
+                      </div> */}
 
-                      <div className="input-list">
-                        <Button type="submit">Singup</Button>
+                      <div className="input-lists">
+                        <Button type="submit" className="profile-btn">Singup</Button>
                       </div>
                     </>
                   )}
                 </form>
               </div>
             </div>
+          </div>
           </div>
         </div>
       </section>

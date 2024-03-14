@@ -29,7 +29,7 @@ module.exports = (err, req, res, next) => {
             const message = `Token Expired, try again`;
             err = new ErrorHandler(message,400)
         }
-console.log(err)
+// console.log(err)
     res.status(err.statusCode).json({
         success: false,
         error: err.stack,

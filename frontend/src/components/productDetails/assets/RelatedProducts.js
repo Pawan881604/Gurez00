@@ -41,13 +41,13 @@ const RelatedProducts = ({ product }) => {
         <h2>Related Products</h2>
       </div>
       <div id="prod-cont" className="prod-cont cont-area-h">
-        <div className="prod-cont-row grid-container">
+        <div className="row flex-wrap">
           {randomFilteredData &&
             randomFilteredData
               .slice(0, 5)
               .filter((item) => item._id !== id)
               .map((product, i) => (
-                <div className="coll prod-collem" key={i}>
+                <div className="card-col prod-collem" key={i}>
                   {loding ? <Loader /> : <ProductCard product={product} />}
                 </div>
               ))}

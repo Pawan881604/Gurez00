@@ -11,6 +11,8 @@ import Asidebar from "../layout/aside/Asidebar";
 import MetaData from "../layout/metaData/MetaData";
 import { useNavigate, useParams } from "react-router-dom";
 import { getAllCategories } from "../../actions/CategoreAction";
+import ProductAnimation from "../layout/loader/ProductAnimation";
+import AsideAnimation from "../layout/loader/AsideAnimation";
 
 const Shop = () => {
   const { shop } = useParams();
@@ -19,6 +21,11 @@ const Shop = () => {
   const { loding, products, productsCount, error, resultPerPage } = useSelector(
     (state) => state.products
   );
+  const {
+    loading: catLoading,
+    allcategroes,
+    error: caterror,
+  } = useSelector((state) => state.allCategroe);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   //this use state for mob
   const [sideBarActive, setsideBarActive] = useState(false);
@@ -34,14 +41,13 @@ const Shop = () => {
 
   // categories
   const [categorie, setCategories] = useState(shop === "shop" ? "" : shop);
-  const categories = ["beauty item", "packing material", "pet products"];
 
-  const categoriesHeandler = (e) => {
-    // console.log(categorie)
-    setCategories(e);
-    setsideBarActive(false);
-    Navigate(`/${e}`);
-  };
+  // const categoriesHeandler = (e) => {
+  //   // console.log(categorie)
+  //   setCategories(e);
+  //   setsideBarActive(false);
+  //   Navigate(`/${e}`);
+  // };
 
   // Rating filter
   const [ratings, setRatings] = useState(0);
@@ -68,9 +74,9 @@ const Shop = () => {
     setsideBarActive(false);
   };
 
-  const path = ["dolls", "animals", "shop"];
+  // const path = ["dolls", "animals", "shop"];
 
-  const isShopValid = path.includes(shop);
+  // const isShopValid = path.includes(shop);
 
   useEffect(() => {
     if (error) {
@@ -110,13 +116,13 @@ const Shop = () => {
   const mobFillterFun = () => {
     setsideBarActive(!sideBarActive);
   };
-
+  const length = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
   return (
     <>
       {/* //  {isShopValid ? ( */}
       <>
         {/* <MetaData title={"Shop"} content={"Shop"} keywords={"Shop"} /> */}
-        <section className="section-cont">
+       
           <div className="product-cont-row shop-page">
             <div id="prod-cont" className="prod-cont cont-area-h">
               <aside
@@ -126,16 +132,18 @@ const Shop = () => {
               >
                 <div className="sidebar-cont">
                   <div className="side-bar">
-                    <Asidebar
-                      price={price} // filter price input slider
-                      inputevent={priceHeandler} // filter price event handler
-                      categories={categories} // filter  categories
-                      categoriesHeandler={categoriesHeandler} // filter event categoriesHeandler
-                      ratingsHeandle={ratingsHeandle} //Rating filter input handler
-                      ratings={ratings} // rating filter
-                      clearFilterHeandler={clearFilterHeandler} //clearFilterHeandler filter input handler
-                      clearFilter={clearFilter} // clearFilterHeandler usestate
-                    />
+                    {catLoading ? (
+                      <AsideAnimation />
+                    ) : (
+                      <Asidebar
+                        price={price} // filter price input slider
+                        inputevent={priceHeandler} // filter price event handler
+                        ratingsHeandle={ratingsHeandle} //Rating filter input handler
+                        ratings={ratings} // rating filter
+                        clearFilterHeandler={clearFilterHeandler} //clearFilterHeandler filter input handler
+                        clearFilter={clearFilter} // clearFilterHeandler usestate
+                      />
+                    )}
                   </div>
                 </div>
               </aside>
@@ -146,23 +154,27 @@ const Shop = () => {
                   </p>
                 </div>
               ) : (
-                <div></div>
+                null
               )}
-              <div className="prod-cont-row p-sho-cont">
+              <div className="row flex-wrap product-containor">
                 {loding ? (
-                  <Loader />
+                  length.map((item, i) => <ProductAnimation key={i} />)
                 ) : (
                   <>
                     {products &&
-                      products.filter(item=>item.productstatus==="Active").map((product, i) => (
-                        <ProductCard key={product._id} product={product} />
-                      ))}
+                      products
+                        .filter((item) => item.productstatus === "Active")
+                        .map((product, i) => (
+                          <div key={i} className="card-col">
+                            <ProductCard product={product} />
+                          </div>
+                        ))}
                   </>
                 )}
               </div>
             </div>
           </div>
-        </section>
+      
       </>
       {/* ) : (
         Navigate("/404")

@@ -44,6 +44,7 @@ export const CreateProduct = () => {
   const [article, setArticle] = useState("");
   const [content, setContent] = useState("");
   const [product_Type, setProductType] = useState("Simple product");
+
   // Genral
   // const [general_Price, setGeneralPrice] = useState("");
   const [product_regular_price, setProduct_regular_price] = useState("");
@@ -60,8 +61,8 @@ export const CreateProduct = () => {
   const [Shipping_class, setShipping_class] = useState("");
   //Variations
   const [Default_value, setDefault_value] = useState("");
-  const [Variations, setVariations] = useState("");
-
+  const [Variations, setVariations] = useState(null);
+  console.log(Variations);
   // setSlug(title && title);
   const handleCheckboxChange = (itemIndex, id) => {
     setCheckedItems((prev) =>
@@ -175,22 +176,105 @@ export const CreateProduct = () => {
       Dimensions: Dimensions,
       Shipping_class: Shipping_class,
       product_uuid: generateUuid(),
-      product_regular_price:product_regular_price,
-      product_sale_price:product_sale_price,
-      Default_value:Default_value
+      product_regular_price: product_regular_price,
+      product_sale_price: product_sale_price,
+      Default_value: Default_value,
     };
     let VariationData = Variations ? Variations : {};
-    // let general_PriceData = general_Price ? general_Price : {};
+    let hasError = false;
+    switch (true) {
+      case !title.trim():
+        hasError = true;
+        alert.error("fill Product Title field");
+        break;
+      case !content.trim():
+        hasError = true;
+        alert.error("fill Product Short Description field");
+        break;
+      case !article.trim():
+        hasError = true;
+        alert.error("fill Product Description field");
+        break;
+      case !product_Type.trim():
+        hasError = true;
+        alert.error("fill Product Description field");
+        break;
+      case product_Type === "Simple product":
+        if (
+          product_regular_price.trim() === "" ||
+          product_sale_price.trim() === ""
+        ) {
+          hasError = true;
+          alert.error(
+            "Please fill in Regular Price and Sale Price fields for a Simple product"
+          );
+        }
+        break;
+      case (imageIds ?? []).length === 0:
+        hasError = true;
+        alert.error("Please add images");
+        break;
+      case (checkedItems ?? []).length === 0:
+        hasError = true;
+        alert.error("Please select parent category");
+        break;
+      case (subcheckedItems ?? []).length === 0:
+        hasError = true;
+        alert.error("Please select sub category");
+        break;
+      case !Default_value.trim():
+        hasError = true;
+        alert.error("fill Default value field");
+        break;
+      case product_Type !== "Simple product":
+        if (!Variations) {
+          hasError = true;
+          alert.error("Please add variations");
+          return;
+        }
+        const meta_value = Variations.meta_value;
+        meta_value.forEach((item) => {
+          const keys = Object.keys(item);
+          keys.forEach((subitem, k) => {
+            if (!Variations) {
+              hasError = true;
+              alert.error("Please add variations");
+              return;
+            }
+            const regularPrice = item[subitem][0].regular_price;
+            const salePrice = item[subitem][0].sale_price;
 
-    dispatch(
-      createNewProduct(
-        productData,
-        VariationData,
-        imageIds ? imageIds : [],
-        subcheckedItems ? subcheckedItems : [],
-        checkedItems ? checkedItems : []
-      )
-    );
+            switch (true) {
+              case typeof regularPrice !== "number" ||
+                isNaN(regularPrice) ||
+                typeof salePrice !== "number" ||
+                isNaN(salePrice):
+                hasError = true;
+                alert.error(`Please add regular amd sale price of ${keys}`);
+                break;
+
+              default:
+                break;
+            }
+          });
+        });
+        break;
+
+      default:
+        alert.error("success fully add");
+        break;
+    }
+    if (!hasError) {
+      dispatch(
+        createNewProduct(
+          productData,
+          VariationData,
+          imageIds ? imageIds : [],
+          subcheckedItems ? subcheckedItems : [],
+          checkedItems ? checkedItems : []
+        )
+      );
+    }
   };
 
   useEffect(() => {
@@ -233,25 +317,11 @@ export const CreateProduct = () => {
                 <div className="all-products-cont">
                   <div className="all-products-content-area">
                     <div className="all-products-title">
-                      <h1>demo List</h1>
+                      <h1>Add Product</h1>
                     </div>
 
                     <div className="create-page-contaionr">
                       <div className="from-contaionr">
-                        {/* <ProductForm
-                          createProduct={createProduct}
-                          setName={setName}
-                          setSlug={setSlug}
-                          setPrice={setPrice}
-                          setMaxPrice={setMaxPrice}
-                          setStock={setStock}
-                          // inputValue={inputValue}
-                          // createProductInputHandle={createProductInputHandle}
-                          articleContentHeandle={articleContentHeandle}
-                          contentHeandle={contentHeandle}
-                          seoInputValue={seoInputValue}
-                          seoHandler={seoHandler}
-                        /> */}
                         <ProductForm
                           setTitle={setTitle}
                           setProductType={setProductType}

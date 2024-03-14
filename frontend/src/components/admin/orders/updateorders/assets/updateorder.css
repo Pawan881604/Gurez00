@@ -186,6 +186,12 @@ form button[type="submit"]:hover {
   max-width: 100px;
   padding: 4px;
 }
+.thumb img{
+  max-width: 100px;
+  height: 80px;
+  object-fit: cover;
+  width: 100%;
+}
 .postbox {
   padding: 0px;
   overflow: hidden;

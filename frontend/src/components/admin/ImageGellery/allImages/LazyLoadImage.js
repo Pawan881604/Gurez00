@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import Loader from "../../../layout/loader/Loader";
+import { server_url } from "../../../../utils/Url";
 export const LazyLoadImage = ({ src, alt, handleImageClick, image }) => {
   const [ref, inView] = useInView({
     triggerOnce: true, // Only trigger the loading once
@@ -29,7 +30,7 @@ export const LazyLoadImage = ({ src, alt, handleImageClick, image }) => {
                 onClick={(e) => {
                   handleImageClick(image);
                 }}
-                src={`https://gurez.onrender.com/${src}`}
+                src={`${server_url()}/${src}`}
                 alt={image && image.altText?image.altText:'avatar'}
               />
             </div>

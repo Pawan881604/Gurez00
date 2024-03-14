@@ -80,7 +80,7 @@ const Details = ({
                 {product &&
                   product.product_category &&
                   product.product_category &&
-                  product.product_category[0].name}
+                  product.product_category[0] &&  product.product_category[0].name}
               </NavLink>
             </li>
             <li>

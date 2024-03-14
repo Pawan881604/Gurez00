@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
 import Currency from "../../../../layout/currency/Currency";
-import client_url from "../../../../../utils/Url";
+import {client_url} from "../../../../../utils/Url";
 import { CiDeliveryTruck } from "react-icons/ci";
 import { Button } from "@material-ui/core";
 
@@ -15,16 +15,16 @@ const OrderProductList = () => {
     <>
       <div className="postbox order-form-area">
         <div className="postbox-header row">
-          <div className="item col-md-8">
+          <div className="col-md-8">
             <p className="xsm-font-size">Item</p>
           </div>
-          <div className="item col-md-2">
+          <div className="col-md-2">
             <p className="xsm-font-size">Cost</p>
           </div>
-          <div className="item col-md-2">
+          <div className="col-md-2">
             <p className="xsm-font-size">Qty</p>
           </div>
-          <div className="item col-md-2">
+          <div className="col-md-2">
             <p className="xsm-font-size">Total</p>
           </div>
         </div>
@@ -32,13 +32,13 @@ const OrderProductList = () => {
           order_details_info.product_Items &&
           order_details_info.product_Items.map((item, i) => (
             <div className="postbox-inner row" key={i}>
-              <div className="item col-md-8 row">
+              <div className="col-md-8 row">
                 <div className="thumb col-md-2">
                   <img src={`${client_url()}/${item.path}`} alt="d" />
                 </div>
                 <div
                   style={{ padding: "5px" }}
-                  className="product-item col-md-10"
+                  className="product-col-md-10"
                 >
                   <NavLink
                     className="xsm-font-size"
@@ -48,15 +48,15 @@ const OrderProductList = () => {
                   </NavLink>
                 </div>
               </div>
-              <div className="item col-md-2">
+              <div className="col-md-2">
                 <bdi>
                   <Currency price={item.price} />
                 </bdi>
               </div>
-              <div className="item col-md-2">
+              <div className="col-md-2">
                 <p>{item.quantity}</p>
               </div>
-              <div className="item col-md-2">
+              <div className="col-md-2">
                 <bdi>
                   <bdi>
                     <Currency price={item.price * item.quantity} />
@@ -66,7 +66,7 @@ const OrderProductList = () => {
             </div>
           ))}
         <div className="postbox-inner row">
-          <div className="item col-md-3 row ">
+          <div className="col-md-3 row ">
             <div className="thumb col-md-4">
               <CiDeliveryTruck />
             </div>
@@ -74,7 +74,7 @@ const OrderProductList = () => {
               <p className="xsm-font-size">shipping</p>
             </div>
           </div>
-          <div className="item col-md-8">
+          <div className="col-md-8">
             {order_details_info &&
               order_details_info.product_Items &&
               order_details_info.product_Items.map((item, i) => (
@@ -89,7 +89,7 @@ const OrderProductList = () => {
                 </div>
               ))}
           </div>
-          <div className="item col-md-3">
+          <div className="col-md-3">
             <p className="xsm-font-size">
               <Currency price={orders && orders.order_info_shipping_charges} />
             </p>

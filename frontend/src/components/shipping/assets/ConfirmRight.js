@@ -4,19 +4,22 @@ import { useNavigate } from "react-router-dom";
 import ApplyCoupen from "./ApplyCoupen";
 import Currency from "../../layout/currency/Currency";
 import { useSelector, useDispatch } from "react-redux";
-import { verifyMasterCoupon } from "../../../actions/MasterCouponAction";
+import {
+  coupon_clear_error,
+  verifyMasterCoupon,
+} from "../../../actions/MasterCouponAction";
 import { v4 as uu } from "uuid";
 import {
   ALL_MASTER_COUPON_CLEAR,
   VERIFY_MASTER_COUPON_RESET,
 } from "../../../constants/MasterCouponConstant";
+import { server_url } from "../../../utils/Url";
 export const ConfirmRight = ({ cartItem, shippingInfo }) => {
   // const [coupon, setCoupon] = useState("");
   const uuid = uu().slice(0, 12);
 
   const dispatch = useDispatch();
   const [discountedprice, setDiscountedprice] = useState("");
-  const [msgVisiable,setVisiable] = useState(null);
   const [CouponinputValue, setCouponinputValue] = useState("");
   const [shoeMsg, setShoeMsg] = useState("");
 
@@ -43,9 +46,10 @@ export const ConfirmRight = ({ cartItem, shippingInfo }) => {
   //-------------- remove coupon
 
   const removeCoupon = () => {
-    setDiscountedprice(totalPrice);
+    setDiscountedprice(0);
     setCouponinputValue("");
     dispatch({ type: VERIFY_MASTER_COUPON_RESET });
+    dispatch({ type: ALL_MASTER_COUPON_CLEAR });
   };
 
   const inputData = () => {
@@ -63,7 +67,7 @@ export const ConfirmRight = ({ cartItem, shippingInfo }) => {
       subtotal,
       shippingChargs,
       tax,
-      totalPrice: discountedprice,
+      totalPrice: discountedprice === 0 ? totalPrice : discountedprice,
       coupon: coupon_data && coupon_data.name,
       coupon_uuid: coupon_data && coupon_data.uuid,
       discountamount:
@@ -71,7 +75,7 @@ export const ConfirmRight = ({ cartItem, shippingInfo }) => {
           ? `${coupon_data.disscount}%`
           : null,
       discounttype: coupon_data && coupon_data.type,
-      coupon_discount: discountedprice && discountedprice,
+      coupon_discount:totalPrice- discountedprice,
       uuid,
       totalQuantity,
     };
@@ -82,29 +86,29 @@ export const ConfirmRight = ({ cartItem, shippingInfo }) => {
 
   useEffect(() => {
     if (couponError) {
-      setVisiable(false)
+      setDiscountedprice(0);
       setShoeMsg(couponError);
     }
     if (coupon_data) {
       if (coupon_data.type === "percentage") {
-        const data = (totalPrice * coupon_data.disscount) / 100;
+        const discount = totalPrice * (coupon_data.disscount / 100);
+        const  data = totalPrice -discount;
         setDiscountedprice(data);
       } else if (coupon_data.type === "fix items") {
         const data = totalPrice - coupon_data.disscount;
         setDiscountedprice(data);
       } else {
-        setDiscountedprice(totalPrice);
+        setDiscountedprice(0);
       }
     }
     if (success) {
-      setVisiable(true)
     }
-  }, [coupon_data, success, totalPrice, couponError]);
-console.log(msgVisiable)
+  }, [coupon_data, dispatch, success, totalPrice, couponError]);
+
   return (
     <>
       <div className="conf-prod-det">
-        <div>
+        <div className="shiping-coupon">
           <ApplyCoupen
             inputData={inputData}
             setCouponinputValue={setCouponinputValue}
@@ -112,27 +116,24 @@ console.log(msgVisiable)
           />
         </div>
 
-        {msgVisiable ? (
+        {success ? (
           <p style={{ color: "green", fontWeight: 600 }}>
-            {coupon_data.message}
+            {coupon_data && coupon_data.message}
           </p>
-        ) :!msgVisiable ? (
+        ) : couponError ? (
           <p style={{ color: "red", fontWeight: 600 }}>{shoeMsg}</p>
         ) : null}
 
         {cartItem &&
           cartItem.map((item, i) => (
             <div className="conf-prod-area" key={i}>
-              <div className="conf-ing">
-                <img
-                  src={`http://localhost:8000/${item.image}`}
-                  alt={item.name}
-                />
-              </div>
-              <p>{item.name}</p>
+              {/* <div className="conf-ing">
+                <img src={`${server_url()}${item.path}`} alt={"image"} />
+              </div> */}
+              <p className="xsm-font-size">{item.name}</p>
               <span>
-                <Currency price={item.quantity} /> X{" "}
-                <Currency price={item.price} /> =
+                {/* <Currency price={item.quantity} /> X{" "} */}
+                {/* <Currency price={item.price} /> = */}
                 <Currency price={item.price * item.quantity} />
               </span>
             </div>
@@ -145,8 +146,7 @@ console.log(msgVisiable)
                 <Currency price={subtotal} />{" "}
               </span>
             </p>
-
-            <>
+            {discountedprice > 0 ? (
               <p>
                 <span>
                   coupon:
@@ -161,8 +161,7 @@ console.log(msgVisiable)
                   <span onClick={removeCoupon}>Remove</span>
                 </span>
               </p>
-            </>
-
+            ) : null}
             <p>
               <span>Shipping Charges:</span>
               <span>
@@ -181,7 +180,9 @@ console.log(msgVisiable)
                 <b>Total:</b>
               </span>
               <span>
-                <Currency price={discountedprice} />
+                <Currency
+                  price={discountedprice === 0 ? totalPrice : discountedprice}
+                />
               </span>
             </p>
           </div>

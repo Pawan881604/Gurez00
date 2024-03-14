@@ -9,6 +9,7 @@ import {
   getImageId,
 } from "../../../../actions/imageGelleryAction";
 import Loader from "../../../layout/loader/Loader";
+import { server_url } from "../../../../utils/Url";
 
 const ImageGallery = () => {
   const dispatch = useDispatch();
@@ -77,7 +78,7 @@ const ImageGallery = () => {
     images.map((image) => {
       const updatedImage = {
         ...image,
-        src: `http://localhost:8000/${image.path}`,
+        src: `${server_url()}${image.path}`,
         width: 100,
         height: 100,
       };

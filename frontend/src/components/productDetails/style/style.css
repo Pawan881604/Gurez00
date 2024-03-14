@@ -96,7 +96,6 @@ del {
   font-size: 22px;
   font-weight: 700;
   color: var(--G-green);
-  padding-top: 10px;
   margin-bottom: 0px;
   padding-right: 10px;
 }
@@ -139,6 +138,7 @@ del {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin: 10px 0;
 }
 .product-divider {
   width: 40%;
@@ -274,6 +274,8 @@ del {
   background: red;
   color: white;
   padding: 4px;
+  font-size: 10px;
+  opacity: 0.9;
 }
 .product-nO {
   position: absolute;
@@ -284,6 +286,8 @@ del {
   background: var(--G-green);
   color: white;
   padding: 4px;
+  font-size: 10px;
+  opacity: 0.9;
 }
 
 .review-main-div .MuiDialog-paperWidthSm {
@@ -309,13 +313,25 @@ del {
 .prod-des-show table {
   width: 100% !important;
 }
-
+.product-single{
+  padding: 10px;
+}
+.product-page .section-cont{
+  padding: 0px;
+}
+.product-price{
+  margin: 5px 0;
+}
+.summary{
+  padding-top: 10px;
+}
 @media screen and (max-width: 768px) {
   .product-main {
     flex-direction: column;
   }
-  .product-details{
-    padding: 15px 0;
+
+  .product-price p {
+    font-size: 18px;
   }
   .stock-cont .MuiButton-root{
     width: 100%;
@@ -370,11 +386,7 @@ del {
   .rev-col {
     width: 100%;
   }
-  .product-purchase {
-    flex-direction: column;
-    align-items: start;
-    position: relative;
-  }
+
   .stock-cont input {
     text-align: center;
   }

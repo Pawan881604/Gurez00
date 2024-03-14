@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useAlert } from "react-alert";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../../layout/loader/Loader";
@@ -9,24 +9,41 @@ import MetaData from "../../layout/metaData/MetaData";
 // import { getPaymentData } from "../../../actions/Paymentaction";
 import { FaRegCheckCircle } from "react-icons/fa";
 import Currency from "../../layout/currency/Currency";
+import {
+  getOrderDetails,
+  order_details_info,
+  order_shipping_info,
+} from "../../../actions/OrderAction";
+import { get_payment_info } from "../../../actions/Paymentaction";
 
 export const OrderDetails = () => {
   const alert = useAlert();
   const { id } = useParams();
   const dispatch = useDispatch();
-  const { loading, orders, error } = useSelector((state) => state.orderDetails);
-
-  let { shippingInfo, paymentInfo, orderItem } = orders ? orders : {};
+  const { loading, orders, shiping_info, order_details, error } = useSelector(
+    (state) => state.orderDetails
+  );
+  const { payment_info } = useSelector((state) => state.payment);
   console.log(orders);
+
+  let { shippingInfo, paymentInfo } = orders ? orders : {};
+
+  const orderItem = order_details && order_details.product_Items;
+
+  useMemo(() => {
+    dispatch(getOrderDetails(id));
+  }, []);
 
   useEffect(() => {
     if (error) {
       alert.error(error);
       // dispatch(clearErrors());
     }
-    // dispatch(getOrderDetails(id));
-    // dispatch(getPaymentData());
-  }, [dispatch, error, alert, id]);
+
+    dispatch(order_shipping_info(orders && orders.order_info_uuid));
+    dispatch(order_details_info(orders && orders.order_info_uuid));
+    dispatch(get_payment_info(orders && orders.order_info_uuid));
+  }, [dispatch, error, alert, id, orders]);
 
   return (
     <>
@@ -66,7 +83,7 @@ export const OrderDetails = () => {
                       </li>
                       <li className="overview-item">
                         <span>Status:</span>{" "}
-                        <strong>{orders.orderStatus}</strong>
+                        <strong>{orders.order_info_status}</strong>
                       </li>
                       <li className="overview-item">
                         <span>Date:</span>
@@ -76,9 +93,7 @@ export const OrderDetails = () => {
                       </li>
                       <li className="overview-item">
                         <span>Email: </span>{" "}
-                        <strong>
-                          {orders.shippingInfo && orders.shippingInfo.email}
-                        </strong>
+                        <strong>{orders.user && orders.user.email}</strong>
                       </li>
                       <li className="overview-item">
                         <span>Total:</span>{" "}
@@ -89,7 +104,7 @@ export const OrderDetails = () => {
                       <li className="overview-item">
                         <span>Payment Method: </span>{" "}
                         <strong>
-                          {orders.paymentInfo && orders.paymentInfo.mode}
+                          {orders.order_info_mode && orders.order_info_mode}
                         </strong>
                       </li>
                     </ul>
@@ -97,13 +112,20 @@ export const OrderDetails = () => {
                   <div className="orders">
                     <h2>ORDER DETAILS</h2>
                     <div className="order-li">
+                      <h2>Products</h2>
                       {orderItem &&
                         orderItem.map((item, i) => {
                           return (
                             <div key={i} className="order-item">
                               <div className="order-li-item-price">
                                 <p>
-                                  <strong>{item.name}</strong>
+                                  <strong>
+                                    {item.name}
+                                    <br></br>
+                                    <b style={{ fontWeight: 400 }}>
+                                      {item.label}
+                                    </b>
+                                  </strong>
                                   <span>{item.price}</span>
                                 </p>
                               </div>
@@ -129,14 +151,16 @@ export const OrderDetails = () => {
                       <div className="order-li-item-price">
                         <p>
                           <strong>Shipping Price:</strong>
-                          <span>{orders && orders.shippingPrice}</span>
+                          <span>
+                            {orders && orders.order_info_shipping_charges}
+                          </span>
                         </p>
                       </div>
                       <div className="order-li-item-price">
                         <p>
                           <strong>Payment method:</strong>
                           <span>
-                            {orders.paymentInfo && orders.paymentInfo.mode}
+                            {orders.order_info_mode && orders.order_info_mode}
                           </span>
                         </p>
                       </div>
@@ -153,23 +177,62 @@ export const OrderDetails = () => {
                     <div className="billing-details">
                       <h2>Billing details</h2>
                       <div className="Billing-details-area">
-                        {shippingInfo && shippingInfo ? (
+                        {shiping_info && shiping_info ? (
                           <>
-                            <p>{shippingInfo.fullName}</p>
-                            <p>{shippingInfo.phoneNo}</p>
-                            <p>{shippingInfo.address}</p>
-                            <p>{shippingInfo.city}</p>
-                            <p>{shippingInfo.pinCode}</p>
-                            <p>{shippingInfo.state}</p>
-                            <p>{shippingInfo.country}</p>
+                            <div className="order-item">
+                              <div className="order-li-item-price">
+                                <p>
+                                  <strong>Name</strong>
+                                  <span>{shiping_info.fullName}</span>
+                                </p>
+                              </div>
+                              <div className="order-li-item-price">
+                                <p>
+                                  <strong>Phone No.</strong>
+                                  <span>{shiping_info.phoneNo}</span>
+                                </p>
+                              </div>
+                              <div className="order-li-item-price">
+                                <p>
+                                  <strong>Address</strong>
+                                  <span>{shiping_info.address}</span>
+                                </p>
+                              </div>
+                              <div className="order-li-item-price">
+                                <p>
+                                  <strong>City</strong>
+                                  <span>{shiping_info.city}</span>
+                                </p>
+                              </div>
+                              <div className="order-li-item-price">
+                                <p>
+                                  <strong>Pincode</strong>
+                                  <span>{shiping_info.pinCode}</span>
+                                </p>
+                              </div>
+                              <div className="order-li-item-price">
+                                <p>
+                                  <strong>State</strong>
+                                  <span>{shiping_info.state}</span>
+                                </p>
+                              </div>
+                              <div className="order-li-item-price">
+                                <p>
+                                  <strong>country</strong>
+                                  <span>{shiping_info.country}</span>
+                                </p>
+                              </div>
+                              <div className="order-li-item-price">
+                                <p>
+                                  <strong>State</strong>
+                                  <span>{shiping_info.state}</span>
+                                </p>
+                              </div>
+                            </div>
                           </>
                         ) : (
                           <p>Shipping details not found</p>
                         )}
-                        <p>
-                          <span>Shipping charges</span>
-                          <span>{orders.shippingPrice}</span>
-                        </p>
                       </div>
                     </div>
 
@@ -177,20 +240,34 @@ export const OrderDetails = () => {
                       <h2>Payment via</h2>
 
                       <div className="pay-mod-details">
-                        {paymentInfo && paymentInfo ? (
+                        {payment_info && payment_info ? (
                           <>
-                            <p>
-                              <span>Mode:</span>
-                              <span>{paymentInfo.mode}</span>
-                            </p>
-                            <p>
-                              <span>Payment Id:</span>
-                              <span>{paymentInfo.id}</span>
-                            </p>
-                            <p>
-                              <span>Payment status:</span>
-                              <span>{paymentInfo.status}</span>
-                            </p>
+                           <div className="order-item">
+                              <div className="order-li-item-price">
+                                <p>
+                                  <strong>Mode</strong>
+                                  <span>{payment_info.payment_type}</span>
+                                </p>
+                              </div>
+                              <div className="order-li-item-price">
+                                <p>
+                                  <strong>Payment Id</strong>
+                                  <span>
+                                {payment_info &&
+                                  payment_info.paynent_response &&
+                                  payment_info.paynent_response[0].id}
+                              </span>
+                                </p>
+                              </div>
+                              <div className="order-li-item-price">
+                                <p>
+                                  <strong>Payment status</strong>
+                                  <span>{payment_info.payment_info_status}</span>
+                                </p>
+                              </div>
+                              </div>
+                          
+                          
                           </>
                         ) : (
                           <p>Ooops.. Data not found</p>

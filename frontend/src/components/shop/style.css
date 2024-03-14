@@ -38,23 +38,25 @@ aside {
 .shop-page .product-details {
   text-align: center;
 }
-.shop-page .rev-are{
+.shop-page .rev-are {
   justify-content: center;
 }
-.shop-page .product-price p{
+.shop-page .product-price p {
   font-size: 16px;
 }
 .shop-page .product-details h3 {
   margin: 5px 0 0 0;
 }
 .shop-page .product-details h3 a {
-  width: 260px;
+  width: 100%;
   white-space: nowrap;
   display: block;
   overflow: hidden;
   text-overflow: ellipsis;
   margin: 0;
+  padding: 0 10px;
   font-weight: 600;
+  box-shadow: unset !important;
 }
 
 .pagination {
@@ -78,22 +80,39 @@ aside {
 .pageItemActive a {
   color: #fff !important;
 }
-.p-sho-cont {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: 550px 550px;
-  gap: 10px;
+
+@media only screen and (max-width: 1008px) {
+  .shop-page .aside-bar-cont {
+    width: 30%;
+  }.shop-page .product-containor .card-col {
+    width: 31.5% !important;
+  }
+  .shop-page .product-containor {
+    width: 70%;
+  }
+
 }
 @media only screen and (max-width: 900px) {
+  .shop-page .product-containor {
+    width: 100% !important;
+  }
+  .shop-page .product-containor .card-col {
+    width: 32.1%;
+  }
+  .sidebar-active {
+    left: 0px;
+    top: 170px;
+  }
+  .shop-page .aside-bar-cont {
+    width: 100%;
+  }
   #prod-cont {
     flex-direction: column;
   }
   .p-sho-cont {
     width: 100%;
   }
-  .p-sho-cont {
-    grid-template-columns: repeat(3, 1fr);
-  }
+
   .shop-page {
     padding: 0px 0;
   }
@@ -127,16 +146,35 @@ aside {
     z-index: 50;
   }
 }
-@media only screen and (max-width: 767px) {
-  .p-sho-cont {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .p-sho-cont {
-    padding: 0px;
+
+
+.shop-page .aside-bar-cont {
+  width: 25%;
+}
+.shop-page .product-containor {
+  width: 75%;
+}
+.shop-page .product-containor .card-col {
+  width: 32%;
+}
+
+@media only screen and (max-width: 809px) {
+  .shop-page .product-containor .card-col {
+    width: 32%;
   }
 }
-@media only screen and (max-width: 480px) {
-  .p-sho-cont {
-    grid-template-columns: repeat(1, 1fr);
+@media only screen and (max-width: 750px) {
+  .shop-page .product-containor .card-col {
+    width: 48% !important;
+  }
+}
+@media only screen and (max-width: 665px) {
+  .shop-page .product-containor .card-col {
+    width: 47.5% !important;
+  }
+}
+@media only screen and (max-width: 499px) {
+  .shop-page .product-containor .card-col {
+    width: 47%;
   }
 }

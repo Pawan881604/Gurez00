@@ -1,5 +1,6 @@
 import axios from "axios";
 import {
+  ALL_MASTER_COUPON_CLEAR,
   ALL_MASTER_COUPON_FAIL,
   ALL_MASTER_COUPON_REQUEST,
   ALL_MASTER_COUPON_SUCCESS,
@@ -108,13 +109,11 @@ export const verifyMasterCoupon = (coupon, ids) => async (dispatch) => {
   }
 };
 
-
-
 export const getAllCoupons = () => async (dispatch) => {
   try {
     dispatch({ type: ALL_MASTER_COUPON_REQUEST });
     const { data } = await axios.get("/api/v1/all-master-coupon");
-   
+
     dispatch({ type: ALL_MASTER_COUPON_SUCCESS, payload: data.allcoupon });
   } catch (error) {
     dispatch({
@@ -124,3 +123,6 @@ export const getAllCoupons = () => async (dispatch) => {
   }
 };
 
+export const coupon_clear_error = () => async (dispatch) => {
+  dispatch({ type: ALL_MASTER_COUPON_CLEAR });
+};

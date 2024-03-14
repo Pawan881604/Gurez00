@@ -17,25 +17,26 @@ const Cards2 = ({ product }) => {
       <div className="product-list-sm">
         <div className="list-sm-img">
           <LazyLoadImages
-            product={   product && product.product_images && product.product_images[0]}
+            product={
+              product && product.product_images && product.product_images[0]
+            }
           />
         </div>
         <div className="list-sm-title">
-          <h3>
-            <NavLink to={"/"}> {product.name}</NavLink>
+          <h3 style={{ margin: 0 }}>
+            <NavLink style={{ fontWeight: 500 }} to={"/"}>
+              {" "}
+              {product.product_name}
+            </NavLink>
           </h3>
           <div className="list-sm-price">
             <p>
               <span>
-              <Currency
-                    price={product.product_regular_price}
-                  />
+                <Currency price={product.product_regular_price} />
               </span>
               -
               <span>
-              <Currency
-                    price={product.product_sale_price}
-                  />
+                <Currency price={product.product_sale_price} />
               </span>
             </p>
           </div>

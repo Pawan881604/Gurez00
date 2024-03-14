@@ -75,20 +75,22 @@ exports.getAllMasterCoupon = catchAsyncError(async (req, res, next) => {
 
 exports.verifyMasterCoupon = catchAsyncError(async (req, res, next) => {
   const { coupon, ids } = req.body;
-
+  let data;
   const couponData = await MasrterCouponModel.findOne({
     master_coupon_code: coupon,
   });
-  let data;
+
   if (!couponData) {
+    data=null;
     return next(new ErrorHandler("Invalid coupon.", 404));
   }
 
   const valid_date = isWithinDateRange(couponData);
   if (!valid_date) {
+    data=null;
     return next(new ErrorHandler("Coupon has been expired.", 404));
   }
-
+  
   if (couponData.master_coupon_type === "Percentage discount") {
     data = applyCartPercentageDiscount("percentage", couponData);
   } else if (couponData.master_coupon_type === "Fixed basket discount") {

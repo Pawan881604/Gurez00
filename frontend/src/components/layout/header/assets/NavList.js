@@ -44,13 +44,11 @@ export const NavList = ({ toggleContentRemove }) => {
                   <li key={i}>
                     <div className="mob-list">
                       <span onClick={toggleContentRemove}>
-                        {" "}
                         <NavLink to={`/product-category/${item.slug}`}>
                           {item.name}
                         </NavLink>
                       </span>
                       <span onClick={() => handleClick(i)}>
-                        {" "}
                         {visible === i ? <IoIosArrowUp /> : <IoIosArrowDown />}
                       </span>
                     </div>
@@ -86,7 +84,18 @@ export const NavList = ({ toggleContentRemove }) => {
             </li>
           </ul>
         </div>
-      ) : null}
+      ) : (
+        <div className="nav-col nav-li-list">
+          <div style={{    maxWidth: '65%',margin:'0px auto',padding:'17px 0'}} className="nav-list parent-navlist">
+            {/* <div style={{margin:'5px 0'}} className="animated-background col3" />{" "}
+            <div style={{margin:'5px 0'}} className="animated-background col3" />{" "}
+            <div style={{margin:'5px 0'}} className="animated-background col3" />{" "}
+            <div style={{margin:'5px 0'}} className="animated-background col3" />{" "}
+            <div style={{margin:'5px 0'}} className="animated-background col3" />{" "}
+            <div style={{margin:'5px 0'}} className="animated-background col3" /> */}
+          </div>
+        </div>
+      )}
     </>
   );
 };

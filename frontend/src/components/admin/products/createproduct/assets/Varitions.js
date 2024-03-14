@@ -1,15 +1,14 @@
 import { Button } from "@material-ui/core";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CiCircleRemove } from "react-icons/ci";
 import { IoMdArrowDropdown, IoMdArrowDropup } from "react-icons/io";
 import { v4 as uuidv4, v4 } from "uuid";
 import generateUuid from "../../../../../utils/Uuidv4";
 
-const Varitions = ({ setVariations,setDefault_value }) => {
+const Varitions = ({ setVariations, setDefault_value }) => {
   const [productValue, setProductValue] = useState([]);
   const labelDataString = sessionStorage.getItem("label");
   const labelData = labelDataString ? JSON.parse(labelDataString) : {};
-
 
   let obj = {};
   const varitionsLength = [];
@@ -48,13 +47,13 @@ const Varitions = ({ setVariations,setDefault_value }) => {
 
       obj[key].push({
         [nestedValue.name]: [
-          { "regular_price": numFirstInt, "sale_price": numSecondInt },
+          { regular_price: numFirstInt, sale_price: numSecondInt },
         ],
       });
 
       matadata.meta_value.push({
         [nestedValue.name]: [
-          { "regular_price": numFirstInt, "sale_price": numSecondInt },
+          { regular_price: numFirstInt, sale_price: numSecondInt },
         ],
       });
       varitionsName.push(nestedValue.name);
@@ -64,6 +63,7 @@ const Varitions = ({ setVariations,setDefault_value }) => {
   const AddVaritions = () => {
     setVariations(matadata);
   };
+
   return (
     <>
       <div className="tab-general">
@@ -123,6 +123,12 @@ const Varitions = ({ setVariations,setDefault_value }) => {
                         />
                       </div>
                     </div>
+                    {Number(productValue[i] && productValue[i][0]) <
+                    Number(productValue[i] && productValue[i][1]) ? (
+                      <p className="danger-text xsm-font-size">
+                        Sale price should be less then from Regular price
+                      </p>
+                    ) : null}
                   </div>
                 </div>
               </div>

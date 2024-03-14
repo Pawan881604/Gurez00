@@ -72,6 +72,7 @@ import BlogCategoryPage from "./components/blog/blogcategorypage/BlogCategoryPag
 import UpdateAttribute from "./components/admin/products/attribute/update/UpdateAttribute";
 import UpdateAttributeLabel from "./components/admin/products/attribute/label/update/UpdateAttributeLabel";
 import GetContactDetails from "./components/admin/contact/GetContactDetails";
+import UserDashboard from "./components/account/assets/UserDashboard";
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -108,6 +109,7 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/contact-us" element={<ContactUs />} />
                 <Route path="/shop" element={<Shop />} />
+                <Route path="/user-dashboard" element={<UserDashboard />} />
                 <Route
                   path="/product-category/:category"
                   element={<Category />}
@@ -189,7 +191,7 @@ function App() {
                   element={<ProtectedRoute Component={OrderSuccess} />}
                 />
                 <Route
-                  path="/order/me"
+                  path="/orders"
                   element={<ProtectedRoute Component={OrderMe} />}
                 />
 

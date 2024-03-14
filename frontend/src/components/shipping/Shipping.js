@@ -80,7 +80,9 @@ export const Shipping = () => {
         content={"Shipped Order"}
         keywords={" Shipped Order"}
       />
+      <div className="stepper-main">
       <CheckoutStep activeStep={0} />
+      </div>
       <section className="section-cont">
         <div id="shipping-cont" className="cont-area-h">
           <div className="shipping-containor">

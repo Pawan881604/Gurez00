@@ -10,6 +10,8 @@ import { FaAlignLeft } from "react-icons/fa6";
 import Asidebar from "../layout/aside/Asidebar";
 import ErrorPage from "../404Page/ErrorPage";
 import { getAllCategories } from "../../actions/CategoreAction";
+import ProductAnimation from "../layout/loader/ProductAnimation";
+import AsideAnimation from "../layout/loader/AsideAnimation";
 const Category = () => {
   const navigate = useNavigate();
   const { category } = useParams();
@@ -113,7 +115,7 @@ console.log(price)
   //     productCategory = products[0].category;
   //   }
   // }
-
+  const length = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
   return (
     <>
       {/* <MetaData
@@ -133,7 +135,7 @@ console.log(price)
               <div className="sidebar-cont">
                 <div className="side-bar">
                   {catLoading ? (
-                    <Loader />
+                    <AsideAnimation />
                   ) : (
                     <Asidebar
                     price={price} // filter price input slider
@@ -158,16 +160,20 @@ console.log(price)
             ) : (
               <div></div>
             )}
-            <div className="prod-cont-row p-sho-cont">
-              {loding ? (
-                <Loader />
+              <div className="row flex-wrap product-containor">
+            {loding ? (
+                  length.map((item, i) => <ProductAnimation key={i} />)
+                
               ) : (
                 <>
                   {products &&
                     products
                       .filter((item) => item.productstatus === "Active")
                       .map((product, i) => (
-                        <ProductCard key={product._id} product={product} />
+                        <div key={i} className="card-col">
+
+                          <ProductCard product={product} />
+                        </div>
                       ))}
                 </>
               )}

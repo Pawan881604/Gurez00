@@ -1,7 +1,7 @@
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Rating } from "@material-ui/lab";
 import { addItemsToCart } from "../../../actions/cartAction";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import LazyLoadImages from "../../layout/lazyload/LazyLoadImages";
 import { CiHeart } from "react-icons/ci";
 import { IoBagCheckOutline } from "react-icons/io5";
@@ -14,7 +14,7 @@ import { useState } from "react";
 import QuickView from "./producquickview/QuickView";
 import { v4 as uuidv4, v4 } from "uuid";
 
-const NewProducts = ({ product }) => {
+const ProductCard = ({ product }) => {
   const dispatch = useDispatch();
   const Navigate = useNavigate();
   const options = {
@@ -40,8 +40,8 @@ const NewProducts = ({ product }) => {
   const wishlist_product_uuid = uuidv4();
   const wishlist_product_id = product._id;
 
-  const addToWishtHandler = (id, price) => {
-    dispatch(wishListAction(id, price));
+  const addToWishtHandler = (id,price) => {
+    dispatch(wishListAction(id,price));
     dispatch(CreateBookmarkAction(wishlist_product_id, wishlist_product_uuid));
     // alert.success("Item Added to Wishlist");
   };
@@ -70,12 +70,7 @@ const NewProducts = ({ product }) => {
               </div>
               <div className="prod-wishs">
                 <CiHeart
-                  onClick={() =>
-                    addToWishtHandler(
-                      product._id && product._id,
-                      product.product_sale_price
-                    )
-                  }
+                  onClick={() => addToWishtHandler(product._id && product._id,product.product_sale_price)}
                 />
               </div>
             </div>
@@ -84,9 +79,7 @@ const NewProducts = ({ product }) => {
                 <span>
                   {Math.abs(
                     (
-                      ((product.product_sale_price -
-                        product.product_regular_price) /
-                        product.product_regular_price) *
+                      ((product.product_sale_price - product.product_regular_price) / product.product_regular_price) *
                       100
                     ).toFixed(1)
                   )}
@@ -107,7 +100,9 @@ const NewProducts = ({ product }) => {
                 {product.product_subcategory &&
                   product.product_subcategory.map((item, i) => (
                     <span key={i}>
+                    
                       <NavLink
+                        key={i}
                         to={`/product-category/${
                           product.product_category[0] &&
                           product.product_category[0].slug
@@ -123,11 +118,15 @@ const NewProducts = ({ product }) => {
             <div className="product-price space-set">
               <p>
                 <span>
-                  <Currency price={product.product_regular_price} />
+                  <Currency
+                    price={product.product_regular_price}
+                  />
                 </span>
                 -
                 <span>
-                  <Currency price={product.product_sale_price} />
+                  <Currency
+                    price={product.product_sale_price}
+                  />
                 </span>
               </p>
             </div>
@@ -185,4 +184,4 @@ const NewProducts = ({ product }) => {
   );
 };
 
-export default NewProducts;
+export default ProductCard;

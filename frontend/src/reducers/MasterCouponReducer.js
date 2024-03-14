@@ -41,18 +41,20 @@ export const massterCouponReducer = (
         loading: false,
         success: true,
         coupon_data: action.payload,
+        error: null,
       };
 
     case CREATE_MASTER_COUPON_FAIL:
     case VERIFY_MASTER_COUPON_FAIL:
     case ALL_MASTER_COUPON_FAIL:
-      return { ...state, loading: false, error: action.payload };
-
-    case ALL_MASTER_COUPON_CLEAR:
       return {
         ...state,
-        error: null,
+        loading: false,
+        error: action.payload,
+        success: null,
+        coupon_data: null,
       };
+
     case CREATE_MASTER_COUPON_RESET:
       return {
         ...state,
@@ -63,11 +65,15 @@ export const massterCouponReducer = (
 
     case VERIFY_MASTER_COUPON_RESET:
       return {
-
         ...state,
         loading: false,
         coupon_data: null,
-        success: null,
+      };
+    case ALL_MASTER_COUPON_CLEAR:
+      return {
+        ...state,
+        loading: false,
+        error: null,
       };
 
     default:

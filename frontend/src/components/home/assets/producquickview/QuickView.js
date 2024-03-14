@@ -20,8 +20,9 @@ const QuickView = ({ productId, setQuickOpen }) => {
   const Navigate = useNavigate();
   const id = productId;
   const { product } = useSelector((state) => state.productDetails);
-  
+  const [label, setLabel] = useState("");
   const [variantPriceValue, setVariantPriceValue] = useState([]);
+  let defaultPrice = product && product.product_sale_price;
   const [quentity, setQuentity] = useState(1);
   const productUuid = product && product.product_uuid;
   const productType = product && product.product_Type;
@@ -43,19 +44,39 @@ const QuickView = ({ productId, setQuickOpen }) => {
 
   //---add to cart item
   const addToCartHandler = () => {
-    dispatch(addItemsToCart(id, quentity));
+    dispatch(
+      addItemsToCart(
+        id,
+        quentity,
+        variantPriceValue.length === 0 ? defaultPrice : variantPriceValue[0],
+        label
+      )
+    );
     alert.success("Item Added to Cart");
   };
   //-------add to wishlist item
 
   const addToWishtHandler = () => {
-    dispatch(wishListAction(id));
+    dispatch(
+      wishListAction(
+        id,
+        variantPriceValue.length === 0 ? defaultPrice : variantPriceValue[0],
+        label
+      )
+    );
     alert.success("Item Added to Wishlist");
   };
 
   //--------buy handler
   const buyHandler = () => {
-    dispatch(addItemsToCart(id, quentity));
+    dispatch(
+      addItemsToCart(
+        id,
+        quentity,
+        variantPriceValue.length === 0 ? defaultPrice : variantPriceValue[0],
+        label
+      )
+    );
     Navigate("/cart");
   };
 
@@ -67,11 +88,19 @@ const QuickView = ({ productId, setQuickOpen }) => {
 
   useMemo(() => {
     dispatch(getProductDetails(id));
-
+    if (product) {
+      setLabel(product && product.Default_value);
+    }
     if (productType === "Variable product") {
       dispatch(getProductPostMeta(productUuid));
     }
-  }, [dispatch, id, productUuid && productUuid, productType && productType]);
+  }, [
+    dispatch,
+    id,
+    productUuid && productUuid,
+    productType && productType,
+
+  ]);
 
   const removeToggle = () => {
     setOpen(!open);
@@ -125,6 +154,7 @@ const QuickView = ({ productId, setQuickOpen }) => {
                               product={product && product}
                               setVariantPriceValue={setVariantPriceValue}
                               variantPriceValue={variantPriceValue}
+                              setLabel={setLabel}
                             />
                             <div className="product-purchase">
                               <AddQuantitBtns

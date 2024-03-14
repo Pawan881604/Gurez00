@@ -3,19 +3,38 @@ import { NavLink } from "react-router-dom";
 import Currency from "../../layout/currency/Currency";
 
 export const CartItemCart = ({ item }) => {
+  console.log(item);
   return (
     <>
-      <div className="cart-img">
-        <img src={item.image} alt="imagesss" />
+      <div className="col-md-7">
+        <div className="row">
+          <div className="thumb col-md-2">
+            <img src={item.path} alt="imagesss" />
+          </div>
+          <div
+            className="product-item col-md-10 w-item-tittle"
+            style={{ padding: 5 }}
+          >
+            <h2>
+              <NavLink style={{ fontWeight: 600 }} to={`/product/${item.name}`}>
+                {item.name}
+              </NavLink>
+            </h2>
+          </div>
+        </div>
       </div>
-      <div className="cart-title">
-        <p>
-          <NavLink to={`/product/${item.product}`}>{item.name}</NavLink>
-        </p>
+
+      {/* <div className="cart-img">
+       
+      </div>
+      <div className="w-item-tittle">
+        <h2>
+          
+        </h2>
       </div>
       <div className="cart-price">
         <Currency price={item.price} />
-      </div>
+      </div> */}
     </>
   );
 };

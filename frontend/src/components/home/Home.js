@@ -17,6 +17,8 @@ import Cards from "./assets/Cards";
 import HeroSlider from "./assets/HeroSlider";
 import NewProducts from "./assets/NewProducts";
 import SaleSection from "./SaleSection";
+import ProductAnimation from "../layout/loader/ProductAnimation";
+import Deli from "./assets/Deli";
 
 export const Home = () => {
   const alert = useAlert();
@@ -25,7 +27,7 @@ export const Home = () => {
     (state) => state.products
   );
   const { error: fProductError } = useSelector((state) => state.productFeature);
-
+  const length = [1, 2, 3, 4, 5, 6, 7, 8];
   useEffect(() => {
     if (error) {
       alert.error(error);
@@ -46,77 +48,83 @@ export const Home = () => {
         content={"Discover toy fectory"}
         keywords={"toys"}
       />
-      {loding ? (
+      {/* {loding ? (
         <Loader />
       ) : (
-        <>
-          {/* <HeroSection />  */}
-          <HeroSlider />
-          <Cards />
-          {/* <CategorySection /> */}
+        <> */}
+      {/* <HeroSection />  */}
+      <HeroSlider />
+      <Cards />
+      {/* <CategorySection /> */}
 
-          <section id="homepage" className="section-cont">
-            <div className="coll-title">
-              <h2>New Products</h2>
-            </div>
-            <div id="prod-cont" className="prod-cont cont-area-h">
-              <div className="prod-cont-row grid-container">
-                {newproducts &&
-                  newproducts
-                    .slice(0, 8)
-                    .filter((item) => item.productstatus === "Active")
-                    .map((product, i) => (
-                      <div className="coll prod-collem" key={i}>
-                        <NewProducts product={product} />
-                      </div>
-                    ))}
+      <section id="homepage" className="section-cont">
+        <div className="coll-title">
+          <h2>New Products</h2>
+        </div>
+        <div id="prod-cont" className="prod-cont cont-area-h">
+          <div className="row flex-wrap">
+            {loding
+              ? length.map((item, i) => <ProductAnimation key={i} />)
+              : newproducts &&
+                newproducts
+                  .slice(0, 8)
+                  .filter((item) => item.productstatus === "Active")
+                  .map((product, i) => (
+                    <div className="card-col prod-collem" key={i}>
+                      <NewProducts product={product} />
+                    </div>
+                  ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="homepage" className="section-cont">
+        <div className="img-containor">
+          <div id="prod-cont" className="prod-cont cont-area-h">
+            <div className="prod-cont-row grid-container">
+              <div>
+                <img src="./Beauty-Care.jpg" alt="Beauty-Care" />
+              </div>
+              <div>
+                <img src="./Beauty-Care.jpg" alt="Beauty-Care" />
+              </div>
+              <div>
+                <img src="./Beauty-Care.jpg" alt="Beauty-Care" />
+              </div>
+              <div>
+                <img src="./Beauty-Care.jpg" alt="Beauty-Care" />
               </div>
             </div>
-          </section>
+          </div>
+        </div>
+      </section>
 
-          <section id="homepage" className="section-cont">
-            <div className="img-containor">
-              <div id="prod-cont" className="prod-cont cont-area-h">
-                <div className="prod-cont-row grid-container">
-                  <div>
-                    <img src="./Beauty-Care.jpg" alt="Beauty-Care" />
-                  </div>
-                  <div>
-                    <img src="./Beauty-Care.jpg" alt="Beauty-Care" />
-                  </div>
-                  <div>
-                    <img src="./Beauty-Care.jpg" alt="Beauty-Care" />
-                  </div>
-                  <div>
-                    <img src="./Beauty-Care.jpg" alt="Beauty-Care" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
+      <CoupenSection />
+      <section id="homepage" className="section-cont">
+        <div className="coll-title">
+          <h2>Feature Products</h2>
+        </div>
 
-          <CoupenSection />
-          <section id="homepage" className="section-cont">
-            <div className="coll-title">
-              <h2>Feature Products</h2>
-            </div>
-            <div id="prod-cont" className="prod-cont cont-area-h">
-              <div className="prod-cont-row grid-container">
-                {products &&
-                  products
-                    .slice(0, 8)
-                    .filter((item) => item.productstatus === "Active")
-                    .map((product, i) => (
-                      <div className="coll prod-collem" key={i}>
-                        <Product product={product} />
-                      </div>
-                    ))}
-              </div>
-            </div>
-          </section>
-          <SaleSection />
-        </>
-      )}
+        <div id="prod-cont" className="prod-cont cont-area-h">
+          <div className="row flex-wrap">
+            {loding
+              ? length.map((item, i) => <ProductAnimation key={i} />)
+              : products &&
+                products
+                  .slice(0, 8)
+                  .filter((item) => item.productstatus === "Active")
+                  .map((product, i) => (
+                    <div className="card-col prod-collem" key={i}>
+                      <Product product={product} />
+                    </div>
+                  ))}
+          </div>
+        </div>
+      </section>
+      <SaleSection />
+      <Deli />
+      {/* </>
+      )} */}
     </>
   );
 };

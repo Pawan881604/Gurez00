@@ -5,6 +5,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { Button } from "@material-ui/core";
 import { useDispatch } from "react-redux";
 import { addItemsToCart } from "../../../actions/cartAction";
+import Currency from "../../layout/currency/Currency";
 export const WishListItem = ({ item }) => {
   const dispatch = useDispatch();
   const Navigate = useNavigate();
@@ -13,23 +14,41 @@ export const WishListItem = ({ item }) => {
     dispatch(addItemsToCart(id, qunty));
     Navigate("/cart");
   };
-  const formattedPrice = new Intl.NumberFormat('en-IN').format(parseFloat(item.price));
+
   return (
     <>
-      <div className="w-item">
-        <LazyLoadImages product={item} />
+      <div
+        style={{ alignItems: "center" }}
+        className="postbox-inner row w-item"
+      >
+        <div className="col-md-8">
+          <div style={{gap:5}} className="row">
+            <div className="thumb col-md-4">
+              <LazyLoadImages product={item} />
+            </div>
 
-        <div className="w-item-tittle">
-          <h2>
-            <NavLink to={`/shop/${item.category}/${item.link}`}>
-              {item.name}
-            </NavLink>
-          </h2>
+            <div className="col-md-8">
+              <h2>
+                <NavLink
+                  style={{ fontWeight: 600 }}
+                  to={`/shop/${item.category}/${item.link}`}
+                >
+                  {item.name}
+                </NavLink>
+              </h2>
+            </div>
+          </div>
         </div>
-        <div className="w-item-fun">
+        <div className="col-md-3">
+          <p>
+            <Currency price={item.price} />{" "}
+          </p>
+        </div>
+        <div className="col-md-3">
+          <Button onClick={() => buyNow(item.link, 1)}>Buy now</Button>
+        </div>
+        <div style={{textAlign:'end'}} className="col-md-3">
           <RemoveWishItem item={item} />
-          <div>₹{formattedPrice}.00</div>
-          <div><Button onClick={() => buyNow(item.link, 1)}>Buy now</Button></div>
         </div>
       </div>
     </>

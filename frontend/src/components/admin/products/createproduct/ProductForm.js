@@ -21,9 +21,9 @@ const ProductForm = ({
 }) => {
   return (
     <>
-      <form>
-        <div>
-          <label>Product Title</label>
+      <form className="form ">
+        <div className="spacer col-md-12">
+          <label className="spacer xsm-font-size">Product Title</label>
           <input
             type="text"
             placeholder="Product Name"
@@ -33,12 +33,12 @@ const ProductForm = ({
           />
         </div>
 
-        <div>
-          <label>Product Short Description</label>
+        <div className="spacer col-md-12">
+        <label className="spacer xsm-font-size">Product Short Description</label>
           <MyEditor event={shortdesHeandle} />
         </div>
-        <div>
-          <label>Product Description</label>
+        <div className="spacer col-md-12">
+        <label className="spacer xsm-font-size">Product Description</label>
           <MyEditor event={descriptionHeandle} />
         </div>
       </form>

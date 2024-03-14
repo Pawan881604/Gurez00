@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useAlert } from "react-alert";
 import SelectCategore from "../../category/allCategory/assets/SelectCategore";
 import "./ProductSidebar.css";
+import { server_url } from "../../../../utils/Url";
 
 export const ProductSidebar = ({
   selectedImage,
@@ -82,7 +83,7 @@ export const ProductSidebar = ({
                   {/* <p>{item._id !== checkPrimary ? "Make it Primary" : null}</p> */}
                   {item._id !== checkPrimary ? (
                     <img
-                      src={`http://localhost:8000/${item.path}`}
+                      src={`${server_url()}${item.path}`}
                       alt="jgjg"
                     />
                   ) : null}

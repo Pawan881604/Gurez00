@@ -99,10 +99,10 @@ const ProductCard = ({ product }) => {
               <p>
                 {product.product_subcategory &&
                   product.product_subcategory.map((item, i) => (
-                    <p key={i}>
+                    <span key={i}>
                     
                       <NavLink
-                        key={i}
+                   
                         to={`/product-category/${
                           product.product_category[0] &&
                           product.product_category[0].slug
@@ -111,7 +111,7 @@ const ProductCard = ({ product }) => {
                         {item.name}
                       </NavLink>
                       ,
-                    </p>
+                    </span>
                   ))}
               </p>
             </div>

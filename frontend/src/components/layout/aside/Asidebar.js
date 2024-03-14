@@ -10,8 +10,7 @@ const Asidebar = ({
   //------------props
   inputevent,
   price,
-  categories,
-  categoriesHeandler,
+  
   ratingsHeandle,
   ratings,
   clearFilterHeandler,
@@ -31,8 +30,8 @@ const Asidebar = ({
       <div className="mob--cont">
         <div className="aside-price-categories">
           <Categories
-            categories={categories}
-            categoriesHeandler={categoriesHeandler}
+     
+           
             clearFilter={clearFilter}
           />
         </div>
