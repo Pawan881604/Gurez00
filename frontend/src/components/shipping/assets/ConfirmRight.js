@@ -75,7 +75,7 @@ export const ConfirmRight = ({ cartItem, shippingInfo }) => {
           ? `${coupon_data.disscount}%`
           : null,
       discounttype: coupon_data && coupon_data.type,
-      coupon_discount:totalPrice- discountedprice,
+      coupon_discount:Math.abs(discountedprice===0?0:totalPrice-discountedprice),
       uuid,
       totalQuantity,
     };
